@@ -7,7 +7,7 @@ function App() {
         🚧 Work in Progress 🚧
       </h1>
       <p className="text-lg md:text-xl text-gray-700 text-center max-w-lg ">
-        Seems like the page you are looking for is under construction. Please
+        🥳Seems like the page you are looking for is under construction. Please
         check back later🎉.
       </p>
       <div className="loader border-t-4 border-blue-600 border-solid rounded-full w-16 h-16 animate-spin"></div>
