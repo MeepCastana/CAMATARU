@@ -25,7 +25,7 @@ function App() {
           Edit <code>src/App.jsx</code>
         </p>
       </div>
-      <p className="read-the-docs">CAMATARU</p>
+      <p className="read-the-docs">CAMATARU @ 2024</p>
     </>
   );
 }
