@@ -17,7 +17,7 @@ function App() {
         </a>
       </div> */}
       <h1>Camataru + Reactss</h1>
-      <div className="card">
+      <div className="card bg-red-500">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
