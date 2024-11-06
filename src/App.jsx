@@ -2,7 +2,7 @@ import "./App.css";
 
 function App() {
   return (
-    <div className="wip-container flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-6">
+    <div className="wip-container flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-red-100 to-blue-200 p-6">
       <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4 animate-pulse">
         🚧 Work in Progress 🚧
       </h1>
