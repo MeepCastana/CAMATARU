@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Header from "./Header";
 import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Header from "./Header";
+import ContentTest from "./ContentTest";
 import AuthFailed from "./AuthFailed";
-import ContentTest from "./src/ContentTest";
 
 const App = () => {
   const [user, setUser] = useState(null);

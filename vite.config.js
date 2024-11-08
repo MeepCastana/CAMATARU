@@ -9,4 +9,7 @@ export default defineConfig({
       "/auth": "http://localhost:5000",
     },
   },
+  alias: {
+    "react-router-dom": "react-router-dom/web",
+  },
 });

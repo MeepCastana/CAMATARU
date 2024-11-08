@@ -1,4 +1,4 @@
-import LoginWithDiscord from "../LoginWithDiscord";
+import LoginWithDiscord from "./LoginWithDiscord";
 import "./App.css";
 
 function ContentTest() {
