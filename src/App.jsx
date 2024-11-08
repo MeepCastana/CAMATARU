@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./Header";
+import Dashboard from "./Dashboard";
 import AuthFailed from "./AuthFailed";
 
 const App = () => {
@@ -9,13 +10,21 @@ const App = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("/dashboard"); // Endpoint to get user session data
+        const response = await fetch("/dashboard", {
+          credentials: "include", // Ensures cookies are sent with the request
+        });
+
         if (response.ok) {
           const data = await response.json();
-          setUser(data.user);
+          console.log("User data fetched:", data);
+          setUser(data.user); // Update user state with the fetched user data
+        } else {
+          console.error("Failed to fetch user:", response.status);
+          setUser(null); // Clear user state if not logged in
         }
       } catch (error) {
         console.error("Failed to fetch user:", error);
+        setUser(null);
       }
     };
 
@@ -33,14 +42,5 @@ const App = () => {
     </Router>
   );
 };
-
-const Dashboard = ({ user }) => (
-  <div className="p-4">
-    <h2 className="text-2xl font-bold">
-      Welcome to the Dashboard, {user?.username || "Guest"}!
-    </h2>
-    <p>This is the protected dashboard page.</p>
-  </div>
-);
 
 export default App;
