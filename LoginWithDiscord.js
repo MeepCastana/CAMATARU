@@ -2,7 +2,7 @@ import React from "react";
 
 const LoginWithDiscord = () => {
   const handleLogin = () => {
-    window.location.href = "https://camataru.ro/auth/discord"; // Redirect to OAuth initiation route
+    window.location.href = "https://camataru.ro/auth/discord"; // Use production backend URL when deployed
   };
 
   return (
