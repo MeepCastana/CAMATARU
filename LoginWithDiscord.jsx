@@ -8,7 +8,7 @@ const LoginWithDiscord = () => {
   return (
     <button
       onClick={handleLogin}
-      className="bg-indigo-500 text-white py-2 px-4 rounded"
+      className="bg-indigo-500 text-white py-2 px-4 rounded border-red-700"
     >
       Login with Discord
     </button>
