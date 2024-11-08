@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./Header";
-import ContentTest from "./ContentTest";
 import AuthFailed from "./AuthFailed";
 
 const App = () => {
@@ -26,14 +24,23 @@ const App = () => {
 
   return (
     <Router>
-      <Header user={user} />
-      <ContentTest />
+      <Header user={user} /> {/* Header will always be displayed */}
       <Routes>
+        <Route path="/dashboard" element={<Dashboard user={user} />} />
         <Route path="/auth-failed" element={<AuthFailed />} />
-        {/* Other routes go here */}
+        {/* Add other routes here */}
       </Routes>
     </Router>
   );
 };
+
+const Dashboard = ({ user }) => (
+  <div className="p-4">
+    <h2 className="text-2xl font-bold">
+      Welcome to the Dashboard, {user?.username || "Guest"}!
+    </h2>
+    <p>This is the protected dashboard page.</p>
+  </div>
+);
 
 export default App;
