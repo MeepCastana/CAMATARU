@@ -1,3 +1,4 @@
+import LoginWithDiscord from "../LoginWithDiscord";
 import "./App.css";
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         </p>
         <div className="loader border-t-4 border-blue-600 border-solid rounded-full w-16 h-16 animate-spin"></div>
       </div>
+      <LoginWithDiscord />
     </>
   );
 }
