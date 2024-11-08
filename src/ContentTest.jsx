@@ -1,7 +1,7 @@
 import LoginWithDiscord from "../LoginWithDiscord";
 import "./App.css";
 
-function App() {
+function ContentTest() {
   return (
     <>
       <div className="wip-container flex flex-col items-center justify-center rounded-3xl bg-gradient-to-br from-red-100 to-blue-200 p-6">
@@ -19,4 +19,4 @@ function App() {
   );
 }
 
-export default App;
+export default ContentTest;
