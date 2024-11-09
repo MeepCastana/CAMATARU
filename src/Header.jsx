@@ -48,7 +48,7 @@ const Header = () => {
           href="/auth/discord"
           className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600"
         >
-          Login with Discord
+          <p className="text-red-500">Login With Discord</p>
         </a>
       )}
     </header>
