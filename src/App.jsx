@@ -6,38 +6,35 @@ import Dashboard from "./Dashboard"; // Import the Dashboard component
 
 const App = () => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("/dashboard", {
-          credentials: "include", // Ensures cookies are sent with the request
-        });
-
+        const response = await fetch("/dashboard", { credentials: "include" });
         if (response.ok) {
           const data = await response.json();
-          console.log("User data fetched:", data);
-          setUser(data.user); // Update user state with the fetched user data
+          setUser(data.user);
         } else {
-          console.error("Failed to fetch user:", response.status);
-          setUser(null); // Clear user state if not logged in
+          setUser(null);
         }
       } catch (error) {
-        console.error("Failed to fetch user:", error);
         setUser(null);
       }
+      setLoading(false);
     };
 
     fetchUser();
   }, []);
 
+  if (loading) return <p>Loading...</p>;
+
   return (
     <Router>
-      <Header user={user} /> {/* Header will always be displayed */}
+      <Header user={user} />
       <Routes>
         <Route path="/dashboard" element={<Dashboard user={user} />} />
         <Route path="/auth-failed" element={<AuthFailed />} />
-        {/* Add other routes here */}
       </Routes>
     </Router>
   );
