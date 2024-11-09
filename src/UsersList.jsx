@@ -26,10 +26,11 @@ const UserList = () => {
           {users.map((user) => (
             <li key={user.discord_id}>
               <img
-                src={user.avatar}
+                src={user.avatar || "default-avatar.png"}
                 alt={`${user.username}'s avatar`}
                 width={50}
               />
+
               <span>
                 {user.username} - PIN: {user.pin}
               </span>
