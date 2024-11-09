@@ -32,7 +32,7 @@ const App = () => {
 
   return (
     <Router>
-      <Header user={user} />
+      {/* <Header user={user} /> */}
       <ContentTest />
       <Routes>
         <Route path="/dashboard" element={<Dashboard user={user} />} />
