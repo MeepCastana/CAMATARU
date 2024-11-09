@@ -1,39 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import AuthFailed from "./AuthFailed";
-import Dashboard from "./Dashboard"; // Import the Dashboard component
-import ContentTest from "./ContentTest";
 import Header from "./Header";
+import Dashboard from "./Dashboard";
+import AuthFailed from "./AuthFailed";
 
 const App = () => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("/dashboard", { credentials: "include" });
+        const response = await fetch("/api/dashboard", {
+          credentials: "include", // Ensures cookies are sent with the request
+        });
+
         if (response.ok) {
           const data = await response.json();
-          setUser(data.user);
+          console.log("User data fetched:", data);
+          setUser(data.user); // Update user state with the fetched user data
         } else {
-          setUser(null);
+          console.error("Failed to fetch user:", response.status);
+          setUser(null); // Clear user state if not logged in
         }
       } catch (error) {
+        console.error("Failed to fetch user:", error);
         setUser(null);
       }
-      setLoading(false);
     };
 
     fetchUser();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-
   return (
     <Router>
-      <Header />
-      <ContentTest />
+      <Header user={user} />{" "}
+      {/* Header will display the user info if logged in */}
       <Routes>
         <Route path="/dashboard" element={<Dashboard user={user} />} />
         <Route path="/auth-failed" element={<AuthFailed />} />
