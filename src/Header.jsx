@@ -21,9 +21,9 @@ const Header = ({ user }) => (
     ) : (
       <a
         href="/auth/discord"
-        className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600"
+        className="bg-red-500 px-4 py-2 rounded hover:bg-blue-600"
       >
-        Login with Discord
+        <span className=" text-green-700">Login with Discord </span>
       </a>
     )}
   </header>
