@@ -5,8 +5,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      "/api": "https://camataru.ro",
-      "/auth": "https://camataru.ro",
+      "/api": "http://localhost:5000",
+      "/auth": "http://localhost:5000",
     },
   },
   alias: {
