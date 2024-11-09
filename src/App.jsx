@@ -1,43 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Header from "./Header";
-import Dashboard from "./Dashboard";
-import AuthFailed from "./AuthFailed";
+import UsersList from "./UsersList";
+import ContentTest from "./ContentTest";
 
 const App = () => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("/api/dashboard", {
-          credentials: "include", // Ensures cookies are sent with the request
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log("User data fetched:", data);
-          setUser(data.user); // Update user state with the fetched user data
-        } else {
-          console.error("Failed to fetch user:", response.status);
-          setUser(null); // Clear user state if not logged in
-        }
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-        setUser(null);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
   return (
     <Router>
-      <Header user={user} />{" "}
-      {/* Header will display the user info if logged in */}
+      <ContentTest />
       <Routes>
-        <Route path="/dashboard" element={<Dashboard user={user} />} />
-        <Route path="/auth-failed" element={<AuthFailed />} />
+        <Route path="/users" element={<UsersList />} />
+        {/* Other routes */}
       </Routes>
     </Router>
   );
