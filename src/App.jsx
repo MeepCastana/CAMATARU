@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AuthFailed from "./AuthFailed";
 import Dashboard from "./Dashboard"; // Import the Dashboard component
 import ContentTest from "./ContentTest";
+import Header from "./Header";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -31,6 +32,7 @@ const App = () => {
 
   return (
     <Router>
+      <Header />
       <ContentTest />
       <Routes>
         <Route path="/dashboard" element={<Dashboard user={user} />} />
