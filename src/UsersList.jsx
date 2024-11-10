@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import io from "socket.io-client";
 
-const socket = io("http://localhost:5000"); // Update this URL if needed
+const socket = io(); // Connect to the server's root URL
 
-const UserList = ({ loggedInPin }) => {
+const UsersList = ({ loggedInPin }) => {
   const [users, setUsers] = useState([]);
   const [clickedUsers, setClickedUsers] = useState({});
 
@@ -19,25 +19,36 @@ const UserList = ({ loggedInPin }) => {
     };
     fetchUsers();
 
-    // Listen for status updates
-    socket.on("statusUpdate", (updatedStatuses) => {
-      setClickedUsers(updatedStatuses);
+    // Listen for real-time updates
+    socket.on("status-updated", ({ userId, status }) => {
+      setClickedUsers((prev) => ({ ...prev, [userId]: status }));
     });
 
-    // Clean up the event listener
-    return () => socket.off("statusUpdate");
+    return () => {
+      socket.off("status-updated");
+    };
   }, []);
 
-  const toggleUser = (userId, userPin) => {
+  const toggleUser = async (userId, userPin) => {
     if (loggedInPin === userPin) {
-      socket.emit("toggleStatus", userId); // Emit toggle event to the server
+      const newStatus = !clickedUsers[userId];
+
+      try {
+        await fetch("/api/toggle-status", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, status: newStatus }),
+        });
+      } catch (error) {
+        console.error("Failed to update user status:", error);
+      }
     } else {
       alert("You can only toggle your own status.");
     }
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-green-500 min-h-screen">
       <h2 className="text-2xl font-bold mb-6 text-center">Users List</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {users.length === 0 ? (
@@ -69,4 +80,4 @@ const UserList = ({ loggedInPin }) => {
   );
 };
 
-export default UserList;
+export default UsersList;
