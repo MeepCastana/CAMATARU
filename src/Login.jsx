@@ -2,18 +2,17 @@ import React, { useState } from "react";
 
 const Login = ({ onLogin }) => {
   const [pin, setPin] = useState("");
-  const [attempts, setAttempts] = useState(0); // Track login attempts
-  const [error, setError] = useState(""); // Error message for incorrect PIN or max attempts
+  const [attempts, setAttempts] = useState(0);
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
-    // If the user has reached 3 attempts, prevent further login attempts
     if (attempts >= 3) {
       setError("Maximum login attempts exceeded. Please try again later.");
       return;
     }
 
     try {
-      // Make a request to verify the PIN in the database
+      // Verify the PIN with the backend
       const response = await fetch("/api/verify-pin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -23,11 +22,18 @@ const Login = ({ onLogin }) => {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        // Store the PIN in localStorage and call the onLogin function
-        localStorage.setItem("userPin", pin);
-        onLogin(pin);
+        // Fetch user details based on the verified PIN
+        const userResponse = await fetch(`/api/get-user-by-pin/${pin}`);
+        const userData = await userResponse.json();
+
+        if (userResponse.ok && userData) {
+          // Store the PIN in localStorage
+          localStorage.setItem("userPin", pin);
+
+          // Pass user details to the parent component
+          onLogin(pin, userData.name, userData.avatar);
+        }
       } else {
-        // Increment attempts and show error if the PIN is incorrect
         setAttempts((prev) => prev + 1);
         setError("Incorrect PIN. Please try again.");
       }
@@ -48,12 +54,11 @@ const Login = ({ onLogin }) => {
           placeholder="Enter PIN"
           className="p-2 border rounded mb-4 text-center"
         />
-        {error && <p className="text-red-500 mb-4">{error}</p>}{" "}
-        {/* Show error message */}
+        {error && <p className="text-red-500 mb-4">{error}</p>}
         <button
           onClick={handleLogin}
           className="bg-blue-500 text-white px-4 py-2 rounded"
-          disabled={attempts >= 3} // Disable the button after 3 attempts
+          disabled={attempts >= 3}
         >
           Log In
         </button>

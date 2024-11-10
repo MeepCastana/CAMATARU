@@ -1,29 +1,20 @@
 import React from "react";
 
-const Header = ({ userName, userAvatar, onLogout }) => {
+const Header = ({ userName, userAvatar }) => {
   return (
-    <header className="w-full bg-blue-600 p-4 flex items-center justify-between sm:justify-end">
+    <header className="flex items-center p-4 bg-blue-500 text-white">
       <div className="flex items-center space-x-4">
-        {/* Profile Picture */}
-        <img
-          src={userAvatar || "default-avatar.png"}
-          alt={`${userName}'s avatar`}
-          className="w-10 h-10 rounded-full border-2 border-white"
-        />
-
-        {/* Username */}
-        <span className="text-white font-semibold hidden sm:inline-block">
-          {userName || "Guest"}
-        </span>
+        {userAvatar && (
+          <img
+            src={userAvatar}
+            alt={`${userName}'s avatar`}
+            className="w-10 h-10 rounded-full"
+          />
+        )}
+        <h1 className="text-xl font-semibold">
+          Welcome, {userName || "Guest"}!
+        </h1>
       </div>
-
-      {/* Logout Button */}
-      <button
-        onClick={onLogout}
-        className="ml-4 bg-red-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-red-600 transition duration-200"
-      >
-        Logout
-      </button>
     </header>
   );
 };

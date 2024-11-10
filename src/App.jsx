@@ -1,55 +1,28 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./Login";
-import UsersList from "./UsersList";
 import Header from "./Header";
+import UsersList from "./UsersList";
 
 const App = () => {
-  const [loggedInPin, setLoggedInPin] = useState(
-    localStorage.getItem("userPin")
-  );
+  const [loggedInPin, setLoggedInPin] = useState(null);
+  const [loggedInUserName, setLoggedInUserName] = useState("");
+  const [loggedInUserAvatar, setLoggedInUserAvatar] = useState("");
 
-  // Define username and avatar for the logged-in user (these could be fetched from the backend on login)
-  const [loggedInUserName, setLoggedInUserName] = useState("Username"); // Example name
-  const [loggedInUserAvatar, setLoggedInUserAvatar] = useState(
-    "https://example.com/path-to-avatar.jpg"
-  ); // Example avatar URL
-
-  const handleLogout = () => {
-    localStorage.removeItem("userPin");
-    setLoggedInPin(null);
-    setLoggedInUserName("");
-    setLoggedInUserAvatar("");
+  const handleLogin = (pin, name, avatar) => {
+    setLoggedInPin(pin);
+    setLoggedInUserName(name);
+    setLoggedInUserAvatar(avatar);
   };
 
   return (
-    <Router>
-      <div className="app-container">
-        {loggedInPin && (
-          <Header
-            userName={loggedInUserName}
-            userAvatar={loggedInUserAvatar}
-            onLogout={handleLogout}
-          />
-        )}
-        <Routes>
-          <Route
-            path="/"
-            element={
-              loggedInPin ? (
-                <UsersList
-                  loggedInPin={loggedInPin}
-                  loggedInUserName={loggedInUserName}
-                  loggedInUserAvatar={loggedInUserAvatar}
-                />
-              ) : (
-                <Login onLogin={setLoggedInPin} />
-              )
-            }
-          />
-        </Routes>
-      </div>
-    </Router>
+    <div>
+      <Header userName={loggedInUserName} userAvatar={loggedInUserAvatar} />
+      {loggedInPin ? (
+        <UsersList loggedInPin={loggedInPin} />
+      ) : (
+        <Login onLogin={handleLogin} />
+      )}
+    </div>
   );
 };
 
