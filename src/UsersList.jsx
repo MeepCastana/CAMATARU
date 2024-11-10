@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
-const UsersList = ({ loggedInPin }) => {
+const socket = io("http://localhost:5000"); // Update this URL if needed
+
+const UserList = ({ loggedInPin }) => {
   const [users, setUsers] = useState([]);
   const [clickedUsers, setClickedUsers] = useState({});
 
@@ -15,15 +18,19 @@ const UsersList = ({ loggedInPin }) => {
       }
     };
     fetchUsers();
+
+    // Listen for status updates
+    socket.on("statusUpdate", (updatedStatuses) => {
+      setClickedUsers(updatedStatuses);
+    });
+
+    // Clean up the event listener
+    return () => socket.off("statusUpdate");
   }, []);
 
   const toggleUser = (userId, userPin) => {
-    // Only allow toggling if the logged-in PIN matches the user's PIN
     if (loggedInPin === userPin) {
-      setClickedUsers((prev) => ({
-        ...prev,
-        [userId]: !prev[userId],
-      }));
+      socket.emit("toggleStatus", userId); // Emit toggle event to the server
     } else {
       alert("You can only toggle your own status.");
     }
@@ -62,4 +69,4 @@ const UsersList = ({ loggedInPin }) => {
   );
 };
 
-export default UsersList;
+export default UserList;
