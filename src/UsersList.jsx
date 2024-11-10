@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./UserList.css"; // Add CSS for custom styling
+import "/index.css";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
