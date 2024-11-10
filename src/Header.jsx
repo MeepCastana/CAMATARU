@@ -2,7 +2,7 @@ import React from "react";
 
 const Header = ({ userName, userAvatar, onLogout }) => {
   return (
-    <header className="flex items-center justify-between p-4 border-b text-white">
+    <header className="flex items-center justify-between p-4 border-b text-white ">
       <div className="flex items-center space-x-4">
         {/* Display the user's avatar if available */}
         {userAvatar ? (
@@ -18,17 +18,14 @@ const Header = ({ userName, userAvatar, onLogout }) => {
           </div>
         )}
 
-        {/* Display the user's name or 'Guest'
-        <h1 className="text-xl font-semibold">
-          
-        </h1> */}
+        {/* Display the user's name or 'Guest' */}
       </div>
 
       {/* Logout Button */}
       {onLogout && (
         <button
           onClick={onLogout}
-          className="bg-red-500 text-white px-4 py-2 border-none rounded-lg hover:bg-red-700 transition duration-200"
+          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200"
         >
           Logout
         </button>
