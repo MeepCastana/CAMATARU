@@ -20,7 +20,7 @@ const AlertModal = ({ message, onClose }) => (
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -50, opacity: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 25 }}
-        onClick={(e) => e.stopPropagation()} // Prevent click propagation to close on modal click
+        onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
           {message}
@@ -39,7 +39,8 @@ const AlertModal = ({ message, onClose }) => (
 const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
   const [users, setUsers] = useState([]);
   const [clickedUsers, setClickedUsers] = useState({});
-  const [showAlert, setShowAlert] = useState(false); // State for modal visibility
+  const [showAlert, setShowAlert] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false); // Track if logged-in user is an admin
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -48,11 +49,19 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
         const data = await response.json();
         setUsers(data);
 
+        // Set initial clickedUsers state and check if the logged-in user is an admin
         const initialStatus = {};
+        let adminStatus = false;
+
         data.forEach((user) => {
           initialStatus[user.discord_id] = user.status || false;
+          if (user.pin === loggedInPin && user.is_admin) {
+            adminStatus = true; // Identify if the logged-in user has admin rights
+          }
         });
+
         setClickedUsers(initialStatus);
+        setIsAdmin(adminStatus);
       } catch (error) {
         console.error("Failed to fetch users:", error);
       }
@@ -88,7 +97,25 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
         console.error("Failed to update user status:", error);
       }
     } else {
-      setShowAlert(true); // Show the modal alert
+      setShowAlert(true);
+    }
+  };
+
+  const resetStatuses = async () => {
+    try {
+      // Make a request to reset all users' statuses in the backend
+      await fetch("/api/reset-statuses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      // Reset local state to reflect the reset statuses
+      const resetStatus = {};
+      users.forEach((user) => {
+        resetStatus[user.discord_id] = false;
+      });
+      setClickedUsers(resetStatus);
+    } catch (error) {
+      console.error("Failed to reset user statuses:", error);
     }
   };
 
@@ -128,6 +155,16 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
           ))
         )}
       </div>
+
+      {/* Conditionally render the Reset Status button if the user is an admin */}
+      {isAdmin && (
+        <button
+          onClick={resetStatuses}
+          className="mt-6 bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition duration-200"
+        >
+          Reset All Statuses
+        </button>
+      )}
 
       {/* Render the alert modal conditionally */}
       {showAlert && (

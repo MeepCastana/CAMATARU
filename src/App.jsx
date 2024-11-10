@@ -2,65 +2,40 @@ import React, { useState } from "react";
 import Login from "./Login";
 import Header from "./Header";
 import UsersList from "./UsersList";
-import io from "socket.io-client";
-
-const socket = io(); // Initialize Socket.IO connection
+import ResetStatus from "./ResetStatus";
 
 const App = () => {
-  const [loggedInPin, setLoggedInPin] = useState(
-    localStorage.getItem("userPin")
-  );
-  const [loggedInUserName, setLoggedInUserName] = useState(
-    localStorage.getItem("userName") || ""
-  );
-  const [loggedInUserAvatar, setLoggedInUserAvatar] = useState(
-    localStorage.getItem("userAvatar") || ""
-  );
-  const [loggedInUserId, setLoggedInUserId] = useState(null);
+  const [loggedInPin, setLoggedInPin] = useState(null);
+  const [loggedInUserName, setLoggedInUserName] = useState("");
+  const [loggedInUserAvatar, setLoggedInUserAvatar] = useState("");
+  const [loggedInUserRole, setLoggedInUserRole] = useState(""); // Track user role for permissions
 
-  const handleLogin = (pin, name, avatar, userId) => {
+  const handleLogin = (pin, name, avatar, role) => {
     setLoggedInPin(pin);
     setLoggedInUserName(name);
     setLoggedInUserAvatar(avatar);
-    setLoggedInUserId(userId);
+    setLoggedInUserRole(role); // Set user role on login
   };
 
-  const handleLogout = async () => {
-    if (loggedInUserId) {
-      try {
-        // Update the backend to untoggle the user's status
-        const response = await fetch("/api/toggle-status", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: loggedInUserId, status: false }),
-        });
-
-        if (!response.ok) {
-          console.error("Failed to untoggle user status on logout.");
-        }
-      } catch (error) {
-        console.error("Failed to untoggle user status on logout:", error);
-      }
-    }
-
-    // Clear user data from state and localStorage
+  const handleLogout = () => {
     setLoggedInPin(null);
     setLoggedInUserName("");
     setLoggedInUserAvatar("");
-    setLoggedInUserId(null);
-    localStorage.removeItem("userPin");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userAvatar");
+    setLoggedInUserRole(""); // Clear role on logout
   };
 
   return (
     <div>
       {loggedInPin && (
-        <Header
-          userName={loggedInUserName}
-          userAvatar={loggedInUserAvatar}
-          onLogout={handleLogout}
-        />
+        <>
+          <Header
+            userName={loggedInUserName}
+            userAvatar={loggedInUserAvatar}
+            onLogout={handleLogout}
+          />
+          {/* Only show ResetStatus component if the user is an admin */}
+          {loggedInUserRole === "admin" && <ResetStatus />}
+        </>
       )}
       {loggedInPin ? (
         <UsersList loggedInPin={loggedInPin} />
