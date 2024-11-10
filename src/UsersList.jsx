@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
+import * as XLSX from "xlsx";
 
 const socket = io("http://localhost:5000");
 
@@ -105,32 +106,95 @@ const UsersList = ({ loggedInPin, clickedUsers, setClickedUsers }) => {
     }
   };
 
-  // Restored resetStatuses function
   const resetStatuses = async () => {
     try {
-      // Make a request to reset all users' statuses in the backend
       await fetch("/api/reset-statuses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
-      setClickedUsers({}); // Reset clicked statuses locally after successful backend reset
+      setClickedUsers({});
     } catch (error) {
       console.error("Failed to reset user statuses:", error);
     }
   };
 
+  const generateReport = () => {
+    // Separate active and inactive users
+    const activeUsers = users
+      .filter((user) => clickedUsers[user.discord_id])
+      .map((user) => [
+        user.display_name || user.username,
+        "", // Spacer column
+        "", // Spacer column
+        "Prezent",
+      ]);
+
+    const inactiveUsers = users
+      .filter((user) => !clickedUsers[user.discord_id])
+      .map((user) => [
+        user.display_name || user.username,
+        "", // Spacer column
+        "", // Spacer column
+        "Absent",
+      ]);
+
+    if (activeUsers.length === 0 && inactiveUsers.length === 0) {
+      setShowAlert(true); // Show alert if no users to report
+      return;
+    }
+
+    // Define headers
+    const headers = ["Display Name", "", "", "Status"];
+
+    // Add headers and space rows for active and inactive lists
+    const activeSheetData = [
+      headers, // Header row
+      [], // Blank row
+      ...activeUsers, // Active users with "Prezent"
+    ];
+
+    const inactiveSheetData = [
+      headers, // Header row
+      [], // Blank row
+      ...inactiveUsers, // Inactive users with "Absent"
+    ];
+
+    // Create worksheets from data
+    const activeSheet = XLSX.utils.aoa_to_sheet(activeSheetData);
+    const inactiveSheet = XLSX.utils.aoa_to_sheet(inactiveSheetData);
+
+    // Set column widths for readability
+    activeSheet["!cols"] = [{ wch: 30 }, { wch: 5 }, { wch: 5 }, { wch: 15 }];
+    inactiveSheet["!cols"] = [{ wch: 30 }, { wch: 5 }, { wch: 5 }, { wch: 15 }];
+
+    // Create workbook and add sheets
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, activeSheet, "Active Users");
+    XLSX.utils.book_append_sheet(workbook, inactiveSheet, "Inactive Users");
+
+    // Export the workbook
+    XLSX.writeFile(workbook, "UsersReport.xlsx");
+  };
   return (
     <div className="p-4 sm:p-6 min-h-screen flex flex-col items-center justify-center">
       <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center text-green-500">
         Listed Users
       </h2>
       {isAdmin && (
-        <button
-          onClick={resetStatuses}
-          className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition duration-200 mb-6"
-        >
-          Reset All Statuses
-        </button>
+        <div className="flex space-x-4 mb-6">
+          <button
+            onClick={resetStatuses}
+            className="bg-yellow-500 text-white px-4 py-2 border-none  rounded-lg hover:bg-orange-600 transition duration-200"
+          >
+            Reset All Statuses
+          </button>
+          <button
+            onClick={generateReport}
+            className="bg-blue-500 text-white px-4 py-2 border-none rounded-lg hover:bg-blue-700 transition duration-200"
+          >
+            Generate Report
+          </button>
+        </div>
       )}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8 gap-4 w-full max-w-screen">
         {users.length === 0 ? (
@@ -166,7 +230,7 @@ const UsersList = ({ loggedInPin, clickedUsers, setClickedUsers }) => {
 
       {showAlert && (
         <AlertModal
-          message="Poți schimba doar statusul tău!"
+          message="No active users to generate a report."
           onClose={() => setShowAlert(false)}
         />
       )}
