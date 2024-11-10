@@ -40,7 +40,7 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
   const [users, setUsers] = useState([]);
   const [clickedUsers, setClickedUsers] = useState({});
   const [showAlert, setShowAlert] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false); // Track if logged-in user is an admin
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -49,14 +49,13 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
         const data = await response.json();
         setUsers(data);
 
-        // Set initial clickedUsers state and check if the logged-in user is an admin
         const initialStatus = {};
         let adminStatus = false;
 
         data.forEach((user) => {
           initialStatus[user.discord_id] = user.status || false;
           if (user.pin === loggedInPin && user.is_admin) {
-            adminStatus = true; // Identify if the logged-in user has admin rights
+            adminStatus = true;
           }
         });
 
@@ -73,11 +72,21 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
       setClickedUsers((prev) => ({ ...prev, [userId]: status }));
     });
 
+    // Listen for reset event from the backend
+    socket.on("reset-statuses", () => {
+      const resetStatus = {};
+      users.forEach((user) => {
+        resetStatus[user.discord_id] = false;
+      });
+      setClickedUsers(resetStatus); // Reset all statuses to false
+    });
+
     // Cleanup on unmount
     return () => {
       socket.off("status-updated");
+      socket.off("reset-statuses");
     };
-  }, [loggedInPin]);
+  }, [loggedInPin, users]);
 
   const toggleUser = async (userId, userPin) => {
     if (loggedInPin === userPin) {
@@ -108,12 +117,6 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
-      // Reset local state to reflect the reset statuses
-      const resetStatus = {};
-      users.forEach((user) => {
-        resetStatus[user.discord_id] = false;
-      });
-      setClickedUsers(resetStatus);
     } catch (error) {
       console.error("Failed to reset user statuses:", error);
     }
