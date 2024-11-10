@@ -236,7 +236,7 @@ const UsersList = ({ loggedInPin, clickedUsers, setClickedUsers }) => {
 
       {showAlert && (
         <AlertModal
-          message="No active users to generate a report."
+          message="Doar tie iti poti schimba statusul."
           onClose={() => setShowAlert(false)}
         />
       )}
