@@ -49,7 +49,9 @@ const UsersList = ({ loggedInPin }) => {
 
   return (
     <div className="p-6 bg-green-500 min-h-screen">
-      <h2 className="text-2xl font-bold mb-6 text-center">Users List</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center text-blue-500">
+        Users List
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {users.length === 0 ? (
           <p className="col-span-full text-center text-gray-600">
@@ -60,7 +62,7 @@ const UsersList = ({ loggedInPin }) => {
             <div
               key={user.discord_id}
               className={`p-4 border rounded-lg shadow cursor-pointer transition-colors duration-200 ${
-                clickedUsers[user.discord_id] ? "bg-green-500" : "bg-red-500"
+                clickedUsers[user.discord_id] ? "bg-green-500" : "bg-blue-500"
               }`}
               onClick={() => toggleUser(user.discord_id, user.pin)}
             >
