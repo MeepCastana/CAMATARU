@@ -24,7 +24,10 @@ const App = () => {
       try {
         await fetch("/api/toggle-status", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest", // Adding a custom header
+          },
           body: JSON.stringify({ userId, status: false }),
         });
         setClickedUsers((prev) => ({

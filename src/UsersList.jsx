@@ -95,7 +95,10 @@ const UsersList = ({ loggedInPin, clickedUsers, setClickedUsers }) => {
       try {
         await fetch("/api/toggle-status", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest", // Adding a custom header
+          },
           body: JSON.stringify({ userId, status: newStatus }),
         });
       } catch (error) {
@@ -110,7 +113,10 @@ const UsersList = ({ loggedInPin, clickedUsers, setClickedUsers }) => {
     try {
       await fetch("/api/reset-statuses", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest", // Adding a custom header
+        },
       });
       setClickedUsers({});
     } catch (error) {

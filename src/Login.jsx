@@ -67,7 +67,10 @@ const Login = ({ onLogin }) => {
       // Verify the PIN with the backend
       const response = await fetch("/api/verify-pin", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest", // Adding a custom header
+        },
         body: JSON.stringify({ pin }),
       });
 

@@ -6,7 +6,10 @@ const ResetStatus = () => {
     try {
       const response = await fetch("/api/reset-status", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest", // Adding a custom header
+        },
       });
 
       if (response.ok) {
