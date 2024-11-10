@@ -1,47 +1,26 @@
 import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
-import UsersList from "./UsersList";
-import ContentTest from "./ContentTest";
-import Login from "./Login"; // Import the Login component
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Login from "./Login";
+import UserList from "./UserList";
 
 const App = () => {
-  const [loggedInUser, setLoggedInUser] = useState(null); // State to hold logged-in user data
+  const [loggedInPin, setLoggedInPin] = useState(
+    localStorage.getItem("userPin")
+  );
 
   return (
     <Router>
-      <ContentTest />
       <Routes>
-        {/* Route for the login page */}
         <Route
-          path="/login"
+          path="/"
           element={
-            loggedInUser ? (
-              <Navigate to="/users" /> // Redirect to /users if already logged in
+            loggedInPin ? (
+              <UserList loggedInPin={loggedInPin} />
             ) : (
-              <Login onLogin={setLoggedInUser} /> // Show login if not authenticated
+              <Login onLogin={setLoggedInPin} />
             )
           }
         />
-
-        {/* Protected route for users list, only accessible when logged in */}
-        <Route
-          path="/users"
-          element={
-            loggedInUser ? (
-              <UsersList user={loggedInUser} />
-            ) : (
-              <Navigate to="/login" /> // Redirect to login if not authenticated
-            )
-          }
-        />
-
-        {/* Default route redirects to login */}
-        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
   );

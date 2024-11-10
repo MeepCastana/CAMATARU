@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const UserList = () => {
+const UserList = ({ loggedInPin }) => {
   const [users, setUsers] = useState([]);
   const [clickedUsers, setClickedUsers] = useState({});
 
@@ -17,11 +17,16 @@ const UserList = () => {
     fetchUsers();
   }, []);
 
-  const toggleUser = (userId) => {
-    setClickedUsers((prev) => ({
-      ...prev,
-      [userId]: !prev[userId],
-    }));
+  const toggleUser = (userId, userPin) => {
+    // Only allow toggling if the logged-in PIN matches the user's PIN
+    if (loggedInPin === userPin) {
+      setClickedUsers((prev) => ({
+        ...prev,
+        [userId]: !prev[userId],
+      }));
+    } else {
+      alert("You can only toggle your own status.");
+    }
   };
 
   return (
@@ -39,7 +44,7 @@ const UserList = () => {
               className={`p-4 border rounded-lg shadow cursor-pointer transition-colors duration-200 ${
                 clickedUsers[user.discord_id] ? "bg-green-500" : "bg-red-500"
               }`}
-              onClick={() => toggleUser(user.discord_id)}
+              onClick={() => toggleUser(user.discord_id, user.pin)}
             >
               <img
                 src={user.avatar || "default-avatar.png"}

@@ -2,54 +2,29 @@ import React, { useState } from "react";
 
 const Login = ({ onLogin }) => {
   const [pin, setPin] = useState("");
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState("");
 
-  const handleLogin = async () => {
-    try {
-      const response = await fetch(`/api/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pin }),
-      });
-      const data = await response.json();
-
-      if (data.error) {
-        setError("Invalid PIN. Please try again.");
-      } else {
-        setUser(data.user);
-        onLogin(data.user); // Pass the logged-in user data to the parent component
-      }
-    } catch (error) {
-      console.error("Login failed:", error);
-      setError("Failed to log in. Please try again later.");
-    }
+  const handleLogin = () => {
+    // Store the PIN in localStorage and call the onLogin function
+    localStorage.setItem("userPin", pin);
+    onLogin(pin);
   };
 
   return (
-    <div className="login-container">
-      {user ? (
-        <div>
-          <h2>Welcome, {user.username}!</h2>
-          <img
-            src={user.avatar || "default-avatar.png"}
-            alt={`${user.username}'s avatar`}
-            width={80}
-          />
-        </div>
-      ) : (
-        <div>
-          <h2>Login</h2>
-          <input
-            type="password"
-            placeholder="Enter PIN"
-            value={pin}
-            onChange={(e) => setPin(e.target.value)}
-          />
-          <button onClick={handleLogin}>Login</button>
-          {error && <p className="error-message">{error}</p>}
-        </div>
-      )}
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h2 className="text-2xl font-bold mb-4">Enter your PIN to log in</h2>
+      <input
+        type="password"
+        value={pin}
+        onChange={(e) => setPin(e.target.value)}
+        placeholder="Enter PIN"
+        className="p-2 border rounded mb-4 text-center"
+      />
+      <button
+        onClick={handleLogin}
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Log In
+      </button>
     </div>
   );
 };
