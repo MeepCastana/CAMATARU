@@ -78,7 +78,11 @@ const Login = ({ onLogin }) => {
 
       if (response.ok && data.success) {
         // Fetch user details based on the verified PIN
-        const userResponse = await fetch(`/api/get-user-by-pin/${pin}`);
+        const userResponse = await fetch("/api/get-user-by-pin/${pin}", {
+          headers: {
+            "X-Requested-With": "XMLHttpRequest", // Adding a custom header
+          },
+        });
         const userData = await userResponse.json();
 
         if (userResponse.ok && userData) {
