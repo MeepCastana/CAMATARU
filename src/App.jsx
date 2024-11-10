@@ -15,11 +15,16 @@ const App = () => {
   };
 
   const handleLogout = () => {
+    // Clear session data from localStorage
+    localStorage.removeItem("userPin");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userAvatar");
+
+    // Reset the logged-in state
     setLoggedInPin(null);
     setLoggedInUserName("");
     setLoggedInUserAvatar("");
   };
-
   return (
     <div>
       {loggedInPin && (
