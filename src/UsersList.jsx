@@ -59,27 +59,14 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
     };
     fetchUsers();
 
-    // Socket connection and real-time updates
-    if (!socket.connected) {
-      socket.connect();
-    }
-
-    socket.on("connect", () => {
-      console.log("Connected to socket server with ID:", socket.id);
-    });
-
+    // Listen for real-time updates from the backend
     socket.on("status-updated", ({ userId, status }) => {
       setClickedUsers((prev) => ({ ...prev, [userId]: status }));
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Disconnected from socket server");
     });
 
     // Cleanup on unmount
     return () => {
       socket.off("status-updated");
-      socket.disconnect();
     };
   }, [loggedInPin]);
 
@@ -110,7 +97,7 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
       <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center text-green-500">
         Listed Users
       </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8  gap-4 w-full max-w-screen">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8 gap-4 w-full max-w-screen">
         {users.length === 0 ? (
           <p className="col-span-full text-center text-gray-600">
             No users found.

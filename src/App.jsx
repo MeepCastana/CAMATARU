@@ -29,17 +29,15 @@ const App = () => {
     if (loggedInUserId) {
       try {
         // Update the backend to untoggle the user's status
-        await fetch("/api/toggle-status", {
+        const response = await fetch("/api/toggle-status", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userId: loggedInUserId, status: false }),
         });
 
-        // Emit the status update to all clients through Socket.IO
-        socket.emit("status-updated", {
-          userId: loggedInUserId,
-          status: false,
-        });
+        if (!response.ok) {
+          console.error("Failed to untoggle user status on logout.");
+        }
       } catch (error) {
         console.error("Failed to untoggle user status on logout:", error);
       }
