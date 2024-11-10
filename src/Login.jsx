@@ -45,7 +45,7 @@ const Login = ({ onLogin }) => {
           localStorage.setItem("userAvatar", userData.avatar);
 
           // Pass user details to the parent component
-          onLogin(pin, userData.name, userData.avatar);
+          onLogin(pin, userData.name, userData.avatar, userData.id);
         }
       } else {
         setAttempts((prev) => prev + 1);
