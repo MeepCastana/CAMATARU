@@ -1,21 +1,50 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Connect to the backend server (adjust URL if needed)
 const socket = io("http://localhost:5000"); // Replace with your backend URL if necessary
 
+const AlertModal = ({ message, onClose }) => (
+  <AnimatePresence>
+    <motion.div
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="bg-white rounded-lg p-6 shadow-lg w-80 text-center relative"
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: -50, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        onClick={(e) => e.stopPropagation()} // Prevent click propagation to close on modal click
+      >
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">{message}</h2>
+        <button
+          onClick={onClose}
+          className="bg-blue-500 text-white px-4 py-2 rounded-md"
+        >
+          OK
+        </button>
+      </motion.div>
+    </motion.div>
+  </AnimatePresence>
+);
+
 const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
   const [users, setUsers] = useState([]);
   const [clickedUsers, setClickedUsers] = useState({});
+  const [showAlert, setShowAlert] = useState(false); // State for modal visibility
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        console.log("Fetching users from /api/users...");
         const response = await fetch("/api/users");
         const data = await response.json();
         setUsers(data);
-        console.log("Fetched users:", data);
 
         const initialStatus = {};
         data.forEach((user) => {
@@ -28,7 +57,7 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
     };
     fetchUsers();
 
-    // Listen for real-time updates from the backend
+    // Socket connection and real-time updates
     if (!socket.connected) {
       socket.connect();
     }
@@ -38,9 +67,6 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
     });
 
     socket.on("status-updated", ({ userId, status }) => {
-      console.log(
-        `Received status update for user ${userId} with status ${status}`
-      );
       setClickedUsers((prev) => ({ ...prev, [userId]: status }));
     });
 
@@ -55,7 +81,7 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
     };
   }, [loggedInPin]);
 
-  const toggleUser = async (userId, userPin, userName, userProfilePicture) => {
+  const toggleUser = async (userId, userPin) => {
     if (loggedInPin === userPin) {
       const newStatus = !clickedUsers[userId];
       setClickedUsers((prev) => ({
@@ -64,9 +90,6 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
       }));
 
       try {
-        console.log(
-          `Sending toggle request for user ${userId} with status ${newStatus}`
-        );
         await fetch("/api/toggle-status", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -76,10 +99,7 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
         console.error("Failed to update user status:", error);
       }
     } else {
-      // Alert the logged-in user's name and profile picture to indicate their profile
-      alert(
-        `Poți schimba doar statusul tău! \n\nNume: ${loggedInUserName}\nProfil: ${loggedInUserAvatar}`
-      );
+      setShowAlert(true); // Show the modal alert
     }
   };
 
@@ -95,19 +115,17 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
           </p>
         ) : (
           users.map((user) => (
-            <div
+            <motion.div
               key={user.discord_id}
-              className={`p-4 border rounded-lg shadow cursor-pointer transition-colors duration-200 ${
-                clickedUsers[user.discord_id] ? "bg-blue-500" : "bg-red-500"
+              className={`p-4 rounded-lg shadow cursor-pointer transition-colors duration-200 ${
+                clickedUsers[user.discord_id] ? "bg-green-500" : "bg-red-500"
               }`}
-              onClick={() =>
-                toggleUser(
-                  user.discord_id,
-                  user.pin,
-                  user.display_name || user.username,
-                  user.avatar
-                )
-              }
+              onClick={() => toggleUser(user.discord_id, user.pin)}
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.3)",
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               <img
                 src={user.avatar || "default-avatar.png"}
@@ -117,10 +135,18 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
               <span className="block text-center text-white font-semibold">
                 {user.display_name || user.username}
               </span>
-            </div>
+            </motion.div>
           ))
         )}
       </div>
+
+      {/* Render the alert modal conditionally */}
+      {showAlert && (
+        <AlertModal
+          message="Poți schimba doar statusul tău!"
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </div>
   );
 };

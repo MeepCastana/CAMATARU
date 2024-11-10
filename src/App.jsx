@@ -14,9 +14,21 @@ const App = () => {
     setLoggedInUserAvatar(avatar);
   };
 
+  const handleLogout = () => {
+    setLoggedInPin(null);
+    setLoggedInUserName("");
+    setLoggedInUserAvatar("");
+  };
+
   return (
     <div>
-      <Header userName={loggedInUserName} userAvatar={loggedInUserAvatar} />
+      {loggedInPin && (
+        <Header
+          userName={loggedInUserName}
+          userAvatar={loggedInUserAvatar}
+          onLogout={handleLogout}
+        />
+      )}
       {loggedInPin ? (
         <UsersList loggedInPin={loggedInPin} />
       ) : (
