@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const UserList = ({ loggedInPin }) => {
+const UsersList = ({ loggedInPin }) => {
   const [users, setUsers] = useState([]);
   const [clickedUsers, setClickedUsers] = useState({});
 
@@ -62,4 +62,4 @@ const UserList = ({ loggedInPin }) => {
   );
 };
 
-export default UserList;
+export default UsersList;

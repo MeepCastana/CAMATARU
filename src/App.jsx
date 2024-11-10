@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./Login";
-import UserList from "./UserList";
+import UsersList from "./UsersList";
 
 const App = () => {
   const [loggedInPin, setLoggedInPin] = useState(
@@ -15,7 +15,7 @@ const App = () => {
           path="/"
           element={
             loggedInPin ? (
-              <UserList loggedInPin={loggedInPin} />
+              <UsersList loggedInPin={loggedInPin} />
             ) : (
               <Login onLogin={setLoggedInPin} />
             )
