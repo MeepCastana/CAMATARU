@@ -124,9 +124,19 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
 
   return (
     <div className="p-4 sm:p-6 min-h-screen flex flex-col items-center justify-center">
-      <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center text-green-500">
-        Listed Users
-      </h2>
+      <div className="flex items-center space-x-4 pb-8">
+        <h2 className="text-xl sm:text-2xl font-bold  text-center text-green-500">
+          Listed Users
+        </h2>
+        {isAdmin && (
+          <button
+            onClick={resetStatuses}
+            className=" bg-yellow-500 text-white border-none rounded-lg hover:bg-orange-600 transition duration-200"
+          >
+            Reset All Statuses
+          </button>
+        )}
+      </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8 gap-4 w-full max-w-screen">
         {users.length === 0 ? (
           <p className="col-span-full text-center text-gray-600">
@@ -160,14 +170,6 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
       </div>
 
       {/* Conditionally render the Reset Status button if the user is an admin */}
-      {isAdmin && (
-        <button
-          onClick={resetStatuses}
-          className="mt-6 bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition duration-200"
-        >
-          Reset All Statuses
-        </button>
-      )}
 
       {/* Render the alert modal conditionally */}
       {showAlert && (
