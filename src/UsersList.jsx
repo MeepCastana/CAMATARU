@@ -75,11 +75,11 @@ const UsersList = ({ loggedInPin }) => {
   };
 
   return (
-    <div className="p-6 bg-green-500 min-h-screen">
+    <div className="p-6  min-h-screen items-center justify-center">
       <h2 className="text-2xl font-bold mb-6 text-center text-blue-500">
         Listed Users
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
         {users.length === 0 ? (
           <p className="col-span-full text-center text-gray-600">
             No users found.
@@ -99,7 +99,7 @@ const UsersList = ({ loggedInPin }) => {
                 className="w-12 h-12 rounded-full mx-auto mb-2"
               />
               <span className="block text-center text-white font-semibold">
-                {user.username}
+                {user.display_name || user.username}
               </span>
             </div>
           ))
