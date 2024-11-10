@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 
-// Adjust socket connection if backend is served from a different URL
-const socket = io(); // Replace with `io("http://localhost:5000")` if needed
+// Connect to the backend server (adjust URL if needed)
+const socket = io("http://localhost:5000"); // Replace with your backend URL if necessary
 
 const UsersList = ({ loggedInPin }) => {
   const [users, setUsers] = useState([]);
@@ -11,11 +11,12 @@ const UsersList = ({ loggedInPin }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        console.log("Fetching users from /api/users...");
         const response = await fetch("/api/users");
         const data = await response.json();
         setUsers(data);
+        console.log("Fetched users:", data);
 
-        // Initialize `clickedUsers` based on fetched users' statuses
         const initialStatus = {};
         data.forEach((user) => {
           initialStatus[user.discord_id] = user.status || false;
@@ -28,8 +29,19 @@ const UsersList = ({ loggedInPin }) => {
     fetchUsers();
 
     // Listen for real-time updates from the backend
+    socket.on("connect", () => {
+      console.log("Connected to socket server with ID:", socket.id);
+    });
+
     socket.on("status-updated", ({ userId, status }) => {
+      console.log(
+        `Received status update for user ${userId} with status ${status}`
+      );
       setClickedUsers((prev) => ({ ...prev, [userId]: status }));
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from socket server");
     });
 
     return () => {
@@ -46,7 +58,9 @@ const UsersList = ({ loggedInPin }) => {
       }));
 
       try {
-        // Send the updated status to the server
+        console.log(
+          `Sending toggle request for user ${userId} with status ${newStatus}`
+        );
         await fetch("/api/toggle-status", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
