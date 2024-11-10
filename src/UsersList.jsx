@@ -13,6 +13,13 @@ const UsersList = ({ loggedInPin }) => {
         const response = await fetch("/api/users");
         const data = await response.json();
         setUsers(data);
+
+        // Initialize `clickedUsers` state based on fetched users' statuses
+        const initialStatus = {};
+        data.forEach((user) => {
+          initialStatus[user.discord_id] = user.status || false;
+        });
+        setClickedUsers(initialStatus);
       } catch (error) {
         console.error("Failed to fetch users:", error);
       }
@@ -31,9 +38,15 @@ const UsersList = ({ loggedInPin }) => {
 
   const toggleUser = async (userId, userPin) => {
     if (loggedInPin === userPin) {
+      // Toggle the user's status locally
       const newStatus = !clickedUsers[userId];
+      setClickedUsers((prev) => ({
+        ...prev,
+        [userId]: newStatus,
+      }));
 
       try {
+        // Send the updated status to the server
         await fetch("/api/toggle-status", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -62,7 +75,7 @@ const UsersList = ({ loggedInPin }) => {
             <div
               key={user.discord_id}
               className={`p-4 border rounded-lg shadow cursor-pointer transition-colors duration-200 ${
-                clickedUsers[user.discord_id] ? "bg-green-500" : "bg-blue-500"
+                clickedUsers[user.discord_id] ? "bg-blue-500" : "bg-red-500"
               }`}
               onClick={() => toggleUser(user.discord_id, user.pin)}
             >
