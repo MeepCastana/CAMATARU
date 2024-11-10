@@ -10,7 +10,7 @@ const App = () => {
   );
 
   // Define username and avatar for the logged-in user (these could be fetched from the backend on login)
-  const [loggedInUserName, setLoggedInUserName] = useState("John Doe"); // Example name
+  const [loggedInUserName, setLoggedInUserName] = useState("Username"); // Example name
   const [loggedInUserAvatar, setLoggedInUserAvatar] = useState(
     "https://example.com/path-to-avatar.jpg"
   ); // Example avatar URL
