@@ -4,7 +4,7 @@ import io from "socket.io-client";
 // Connect to the backend server (adjust URL if needed)
 const socket = io("http://localhost:5000"); // Replace with your backend URL if necessary
 
-const UsersList = ({ loggedInPin }) => {
+const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
   const [users, setUsers] = useState([]);
   const [clickedUsers, setClickedUsers] = useState({});
 
@@ -29,6 +29,10 @@ const UsersList = ({ loggedInPin }) => {
     fetchUsers();
 
     // Listen for real-time updates from the backend
+    if (!socket.connected) {
+      socket.connect();
+    }
+
     socket.on("connect", () => {
       console.log("Connected to socket server with ID:", socket.id);
     });
@@ -44,12 +48,14 @@ const UsersList = ({ loggedInPin }) => {
       console.log("Disconnected from socket server");
     });
 
+    // Cleanup on unmount
     return () => {
       socket.off("status-updated");
+      socket.disconnect();
     };
-  }, []);
+  }, [loggedInPin, loggedInUserName, loggedInUserAvatar]);
 
-  const toggleUser = async (userId, userPin) => {
+  const toggleUser = async (userId, userPin, userName, userProfilePicture) => {
     if (loggedInPin === userPin) {
       const newStatus = !clickedUsers[userId];
       setClickedUsers((prev) => ({
@@ -70,12 +76,15 @@ const UsersList = ({ loggedInPin }) => {
         console.error("Failed to update user status:", error);
       }
     } else {
-      alert("You can only toggle your own status.");
+      // Alert with the logged-in user's own name and profile picture to indicate which profile is theirs
+      alert(
+        `Poți schimba doar statusul tău! \n\nNume: ${loggedInUserName}\nProfil: ${loggedInUserAvatar}`
+      );
     }
   };
 
   return (
-    <div className="p-6  min-h-screen items-center justify-center">
+    <div className="p-6 min-h-screen items-center justify-center">
       <h2 className="text-2xl font-bold mb-6 text-center text-blue-500">
         Listed Users
       </h2>
@@ -91,7 +100,14 @@ const UsersList = ({ loggedInPin }) => {
               className={`p-4 border rounded-lg shadow cursor-pointer transition-colors duration-200 ${
                 clickedUsers[user.discord_id] ? "bg-blue-500" : "bg-red-500"
               }`}
-              onClick={() => toggleUser(user.discord_id, user.pin)}
+              onClick={() =>
+                toggleUser(
+                  user.discord_id,
+                  user.pin,
+                  user.display_name || user.username,
+                  user.avatar
+                )
+              }
             >
               <img
                 src={user.avatar || "default-avatar.png"}
