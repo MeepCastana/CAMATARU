@@ -4,7 +4,7 @@ function ContentTest() {
   return (
     <>
       <div className="wip-container flex flex-col items-center justify-center rounded-3xl bg-gradient-to-br from-red-100 to-blue-200 p-6">
-        <h1 className="text-4xl md:text-5xl font-bold text-red-600 mb-4 animate-pulse pt-12">
+        <h1 className="text-4xl md:text-5xl font-bold text-green-600 mb-4 animate-pulse pt-12">
           🚧 Work in Progress 🚧
         </h1>
         <p className="text-lg md:text-xl text-gray-700 text-center max-w-lg ">
