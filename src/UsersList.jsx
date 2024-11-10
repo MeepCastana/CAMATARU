@@ -15,14 +15,16 @@ const AlertModal = ({ message, onClose }) => (
       onClick={onClose}
     >
       <motion.div
-        className="bg-white rounded-lg p-6 shadow-lg w-80 text-center relative"
+        className="bg-white rounded-lg p-6 shadow-lg w-11/12 sm:w-80 text-center relative"
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -50, opacity: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 25 }}
         onClick={(e) => e.stopPropagation()} // Prevent click propagation to close on modal click
       >
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">{message}</h2>
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
+          {message}
+        </h2>
         <button
           onClick={onClose}
           className="bg-blue-500 text-white px-4 py-2 rounded-md"
@@ -104,11 +106,11 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
   };
 
   return (
-    <div className="p-6 min-h-screen items-center justify-center">
-      <h2 className="text-2xl font-bold mb-6 text-center text-blue-500">
+    <div className="p-4 sm:p-6 min-h-screen flex flex-col items-center justify-center">
+      <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center text-blue-500">
         Listed Users
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 w-full max-w-screen-lg">
         {users.length === 0 ? (
           <p className="col-span-full text-center text-gray-600">
             No users found.
@@ -117,7 +119,7 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
           users.map((user) => (
             <motion.div
               key={user.discord_id}
-              className={`p-4 rounded-lg shadow cursor-pointer transition-colors duration-200 ${
+              className={`p-3 sm:p-4 rounded-lg shadow cursor-pointer transition-colors duration-200 ${
                 clickedUsers[user.discord_id] ? "bg-green-500" : "bg-red-500"
               }`}
               onClick={() => toggleUser(user.discord_id, user.pin)}
@@ -130,9 +132,9 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
               <img
                 src={user.avatar || "default-avatar.png"}
                 alt={`${user.username}'s avatar`}
-                className="w-12 h-12 rounded-full mx-auto mb-2"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mx-auto mb-2"
               />
-              <span className="block text-center text-white font-semibold">
+              <span className="block text-center text-white text-sm sm:text-base font-semibold">
                 {user.display_name || user.username}
               </span>
             </motion.div>
