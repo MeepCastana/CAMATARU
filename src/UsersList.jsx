@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "/index.css";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -26,26 +25,30 @@ const UserList = () => {
   };
 
   return (
-    <div className="user-list-container">
-      <h2>Users List</h2>
-      <div className="user-grid">
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h2 className="text-2xl font-bold mb-6 text-center">Users List</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {users.length === 0 ? (
-          <p>No users found.</p>
+          <p className="col-span-full text-center text-gray-600">
+            No users found.
+          </p>
         ) : (
           users.map((user) => (
             <div
               key={user.discord_id}
-              className={`user-card ${
-                clickedUsers[user.discord_id] ? "green" : "red"
+              className={`p-4 border rounded-lg shadow cursor-pointer transition-colors duration-200 ${
+                clickedUsers[user.discord_id] ? "bg-green-500" : "bg-red-500"
               }`}
               onClick={() => toggleUser(user.discord_id)}
             >
               <img
                 src={user.avatar || "default-avatar.png"}
                 alt={`${user.username}'s avatar`}
-                width={50}
+                className="w-12 h-12 rounded-full mx-auto mb-2"
               />
-              <span>{user.username}</span>
+              <span className="block text-center text-white font-semibold">
+                {user.username}
+              </span>
             </div>
           ))
         )}
