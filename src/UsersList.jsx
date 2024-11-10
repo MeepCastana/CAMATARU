@@ -53,7 +53,7 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
       socket.off("status-updated");
       socket.disconnect();
     };
-  }, [loggedInPin, loggedInUserName, loggedInUserAvatar]);
+  }, [loggedInPin]);
 
   const toggleUser = async (userId, userPin, userName, userProfilePicture) => {
     if (loggedInPin === userPin) {
@@ -76,7 +76,7 @@ const UsersList = ({ loggedInPin, loggedInUserName, loggedInUserAvatar }) => {
         console.error("Failed to update user status:", error);
       }
     } else {
-      // Alert with the logged-in user's own name and profile picture to indicate which profile is theirs
+      // Alert the logged-in user's name and profile picture to indicate their profile
       alert(
         `Poți schimba doar statusul tău! \n\nNume: ${loggedInUserName}\nProfil: ${loggedInUserAvatar}`
       );
