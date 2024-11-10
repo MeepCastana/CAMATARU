@@ -31,9 +31,7 @@ const UserList = () => {
                 width={50}
               />
 
-              <span>
-                {user.username} - PIN: {user.pin}
-              </span>
+              <span>{user.username}</span>
             </li>
           ))}
         </ul>
