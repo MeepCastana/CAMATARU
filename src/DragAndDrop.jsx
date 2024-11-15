@@ -82,15 +82,29 @@ export default function DragAndDrop() {
         onDrop={(e) => handleDrop(e, false)}
         onDragOver={handleDragOver}
       >
-        <h2 className="text-lg font-bold mb-4">Available Users</h2>
+        <h2 className="text-lg font-bold mb-4 text-center">Available Users</h2>
         {users.map((user) => (
           <motion.div
             key={user.id}
-            className="p-2 bg-white rounded mb-2 cursor-pointer shadow text-black"
+            className={`p-3 sm:p-4 rounded-lg shadow cursor-pointer transition-colors duration-200 ${
+              user.status ? "bg-green-500" : "bg-red-500"
+            }`}
             draggable
             onDragStart={handleDragStart(user)}
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.3)",
+            }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
-            {user.name}
+            <img
+              src={user.avatar || "default-avatar.png"}
+              alt={`${user.username}'s avatar`}
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mx-auto mb-2"
+            />
+            <span className="block text-center text-white text-sm sm:text-base font-semibold">
+              {user.display_name || user.username}
+            </span>
           </motion.div>
         ))}
       </div>
@@ -101,15 +115,25 @@ export default function DragAndDrop() {
         onDrop={(e) => handleDrop(e, true)}
         onDragOver={handleDragOver}
       >
-        <h2 className="text-lg font-bold mb-4">Selected Users</h2>
+        <h2 className="text-lg font-bold mb-4 text-center">Selected Users</h2>
         {rightBoxMembers.map((user) => (
           <motion.div
             key={user.id}
-            className="p-2 bg-white rounded mb-2 cursor-pointer shadow text-black"
+            className="p-3 sm:p-4 rounded-lg shadow cursor-pointer bg-white text-black transition-colors duration-200"
             draggable
             onDragStart={handleDragStart(user, true)}
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.3)",
+            }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
-            <p className="font-semibold">{user.name}</p>
+            <img
+              src={user.avatar || "default-avatar.png"}
+              alt={`${user.username}'s avatar`}
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mx-auto mb-2"
+            />
+            <span className="block text-center font-semibold">{user.name}</span>
             <p className="text-sm text-gray-600">{user.info}</p>
           </motion.div>
         ))}

@@ -74,13 +74,13 @@ const App = () => {
   return (
     <Router>
       <div>
-        {loggedInPin && (
-          <Header
-            userName={loggedInUserName}
-            userAvatar={loggedInUserAvatar}
-            onLogout={handleLogout}
-          />
-        )}
+        {/* {loggedInPin && ( */}
+        <Header
+          userName={loggedInUserName}
+          userAvatar={loggedInUserAvatar}
+          onLogout={handleLogout}
+        />
+        {/* )} */}
         <Routes>
           {/* Login Route */}
           <Route
