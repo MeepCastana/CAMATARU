@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 // Connect to the server
 const socket = io("http://localhost:5000");
@@ -8,7 +8,8 @@ const socket = io("http://localhost:5000");
 export default function DragAndDrop() {
   const [users, setUsers] = useState([]);
   const [rightBoxMembers, setRightBoxMembers] = useState([]);
-  const [showAlert, setShowAlert] = useState(false);
+  const [searchLeft, setSearchLeft] = useState("");
+  const [searchRight, setSearchRight] = useState("");
 
   useEffect(() => {
     // Fetch users from the server
@@ -74,6 +75,18 @@ export default function DragAndDrop() {
     event.preventDefault();
   };
 
+  // Filtered lists based on search inputs
+  const filteredUsers = users.filter((user) =>
+    (user.display_name || user.username)
+      .toLowerCase()
+      .includes(searchLeft.toLowerCase())
+  );
+  const filteredRightBoxMembers = rightBoxMembers.filter((user) =>
+    (user.display_name || user.username)
+      .toLowerCase()
+      .includes(searchRight.toLowerCase())
+  );
+
   return (
     <div className="flex gap-8 p-8">
       {/* Left Box */}
@@ -83,30 +96,39 @@ export default function DragAndDrop() {
         onDragOver={handleDragOver}
       >
         <h2 className="text-lg font-bold mb-4 text-center">Available Users</h2>
-        {users.map((user) => (
-          <motion.div
-            key={user.id}
-            className={`p-3 sm:p-4 rounded-lg shadow cursor-pointer transition-colors duration-200 ${
-              user.status ? "bg-green-500" : "bg-red-500"
-            }`}
-            draggable
-            onDragStart={handleDragStart(user)}
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.3)",
-            }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          >
-            <img
-              src={user.avatar || "default-avatar.png"}
-              alt={`${user.username}'s avatar`}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mx-auto mb-2"
-            />
-            <span className="block text-center text-white text-sm sm:text-base font-semibold">
-              {user.display_name || user.username}
-            </span>
-          </motion.div>
-        ))}
+        <input
+          type="text"
+          placeholder="Search users..."
+          value={searchLeft}
+          onChange={(e) => setSearchLeft(e.target.value)}
+          className="w-full p-2 mb-4 rounded"
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+          {filteredUsers.map((user) => (
+            <motion.div
+              key={user.id}
+              className={`p-3 sm:p-4 rounded-lg shadow cursor-pointer transition-colors duration-200 ${
+                user.status ? "bg-green-500" : "bg-red-500"
+              }`}
+              draggable
+              onDragStart={handleDragStart(user)}
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.3)",
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <img
+                src={user.avatar || "default-avatar.png"}
+                alt={`${user.username}'s avatar`}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mx-auto mb-2"
+              />
+              <span className="block text-center text-white text-sm sm:text-base font-semibold">
+                {user.display_name || user.username}
+              </span>
+            </motion.div>
+          ))}
+        </div>
       </div>
 
       {/* Right Box */}
@@ -116,27 +138,38 @@ export default function DragAndDrop() {
         onDragOver={handleDragOver}
       >
         <h2 className="text-lg font-bold mb-4 text-center">Selected Users</h2>
-        {rightBoxMembers.map((user) => (
-          <motion.div
-            key={user.id}
-            className="p-3 sm:p-4 rounded-lg shadow cursor-pointer bg-white text-black transition-colors duration-200"
-            draggable
-            onDragStart={handleDragStart(user, true)}
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.3)",
-            }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          >
-            <img
-              src={user.avatar || "default-avatar.png"}
-              alt={`${user.username}'s avatar`}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mx-auto mb-2"
-            />
-            <span className="block text-center font-semibold">{user.name}</span>
-            <p className="text-sm text-gray-600">{user.info}</p>
-          </motion.div>
-        ))}
+        <input
+          type="text"
+          placeholder="Search selected users..."
+          value={searchRight}
+          onChange={(e) => setSearchRight(e.target.value)}
+          className="w-full p-2 mb-4 rounded"
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+          {filteredRightBoxMembers.map((user) => (
+            <motion.div
+              key={user.id}
+              className="p-3 sm:p-4 rounded-lg shadow cursor-pointer bg-white text-black transition-colors duration-200"
+              draggable
+              onDragStart={handleDragStart(user, true)}
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.3)",
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <img
+                src={user.avatar || "default-avatar.png"}
+                alt={`${user.username}'s avatar`}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mx-auto mb-2"
+              />
+              <span className="block text-center font-semibold">
+                {user.name}
+              </span>
+              <p className="text-sm text-gray-600">{user.info}</p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   );
