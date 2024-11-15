@@ -4,11 +4,7 @@ import { Link } from "react-router-dom";
 
 const HomePage = () => {
   return (
-    <div>
-      <h2>Welcome to Camataru.ro</h2>
-      <Link to="/users">
-        <button>View Users List</button>
-      </Link>
+    <div className="justify-center flex items-center">
       {/* Add other navigation buttons if needed */}
     </div>
   );

@@ -73,7 +73,7 @@ const App = () => {
 
   return (
     <Router>
-      <div>
+      <div className="w-screen">
         {loggedInPin && (
           <Header
             userName={loggedInUserName}
