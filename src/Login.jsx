@@ -8,6 +8,18 @@ const Login = ({ onLogin }) => {
   const [lockoutCountdown, setLockoutCountdown] = useState(null);
 
   useEffect(() => {
+    // Automatically log in a mock user if running on localhost
+    if (window.location.hostname === "localhost") {
+      const mockPin = "1234";
+      const mockName = "Local Test User";
+      const mockAvatar = "https://via.placeholder.com/150";
+      const mockUserId = "local-dev-user";
+
+      // Call the onLogin function directly with mock data
+      onLogin(mockPin, mockName, mockAvatar, mockUserId);
+      return;
+    }
+
     // Check if there's a saved PIN in localStorage to keep the user logged in
     const savedPin = localStorage.getItem("userPin");
     const savedName = localStorage.getItem("userName");
