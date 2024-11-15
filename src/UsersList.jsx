@@ -202,7 +202,7 @@ const UsersList = ({ loggedInPin, clickedUsers, setClickedUsers }) => {
           </button>
         </div>
       )}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8 gap-4 w-full max-w-screen">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8 gap-4 w-full">
         {users.length === 0 ? (
           <p className="col-span-full text-center text-gray-600">
             No users found.
