@@ -2,7 +2,7 @@ import React from "react";
 
 const Header = ({ userName, userAvatar, onLogout }) => {
   return (
-    <header className="flex items-center justify-between p-4 border-b text-white ">
+    <header className="flex items-center justify-between p-4 border-b text-white w-screen">
       <div className="flex items-center space-x-4">
         {/* Display the user's avatar if available */}
         {userAvatar ? (

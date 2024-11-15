@@ -1,18 +1,38 @@
 import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+  Link,
+} from "react-router-dom";
 import Login from "./Login";
 import Header from "./Header";
 import UsersList from "./UsersList";
+import HomePage from "./HomePage"; // Create a new HomePage component
+import DragAndDrop from "./DragAndDrop";
 
 const App = () => {
-  const [loggedInPin, setLoggedInPin] = useState(null);
-  const [loggedInUserName, setLoggedInUserName] = useState("");
-  const [loggedInUserAvatar, setLoggedInUserAvatar] = useState("");
+  const [loggedInPin, setLoggedInPin] = useState(
+    localStorage.getItem("userPin") || null
+  );
+  const [loggedInUserName, setLoggedInUserName] = useState(
+    localStorage.getItem("userName") || ""
+  );
+  const [loggedInUserAvatar, setLoggedInUserAvatar] = useState(
+    localStorage.getItem("userAvatar") || ""
+  );
   const [clickedUsers, setClickedUsers] = useState({});
 
   const handleLogin = (pin, name, avatar) => {
     setLoggedInPin(pin);
     setLoggedInUserName(name);
     setLoggedInUserAvatar(avatar);
+
+    // Save session data
+    localStorage.setItem("userPin", pin);
+    localStorage.setItem("userName", name);
+    localStorage.setItem("userAvatar", avatar);
   };
 
   const handleLogout = async () => {
@@ -52,24 +72,53 @@ const App = () => {
   };
 
   return (
-    <div>
-      {loggedInPin && (
-        <Header
-          userName={loggedInUserName}
-          userAvatar={loggedInUserAvatar}
-          onLogout={handleLogout}
-        />
-      )}
-      {loggedInPin ? (
-        <UsersList
-          loggedInPin={loggedInPin}
-          clickedUsers={clickedUsers}
-          setClickedUsers={setClickedUsers}
-        />
-      ) : (
-        <Login onLogin={handleLogin} />
-      )}
-    </div>
+    <Router>
+      <div>
+        {loggedInPin && (
+          <Header
+            userName={loggedInUserName}
+            userAvatar={loggedInUserAvatar}
+            onLogout={handleLogout}
+          />
+        )}
+        <Routes>
+          {/* Login Route */}
+          <Route
+            path="/"
+            element={
+              loggedInPin ? (
+                <Navigate to="/home" />
+              ) : (
+                <Login onLogin={handleLogin} />
+              )
+            }
+          />
+
+          {/* Home Route */}
+          <Route
+            path="/home"
+            element={loggedInPin ? <HomePage /> : <Navigate to="/" />}
+          />
+
+          <Route path="/test" element={<DragAndDrop />} />
+          {/* Users Route */}
+          <Route
+            path="/users"
+            element={
+              loggedInPin ? (
+                <UsersList
+                  loggedInPin={loggedInPin}
+                  clickedUsers={clickedUsers}
+                  setClickedUsers={setClickedUsers}
+                />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
