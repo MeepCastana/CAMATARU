@@ -182,7 +182,7 @@ const UsersList = ({ loggedInPin, clickedUsers, setClickedUsers }) => {
     XLSX.writeFile(workbook, "UsersReport.xlsx");
   };
   return (
-    <div className="p-4 sm:p-6 min-h-screen flex flex-col items-center justify-center">
+    <div className="p-4 sm:p-6 min-h-screen flex flex-col items-center justify-center w-full">
       <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center text-green-500">
         Listed Users
       </h2>
