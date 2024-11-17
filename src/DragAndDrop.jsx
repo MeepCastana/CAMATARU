@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 export default function DragAndDrop({ isAdmin }) {
   const [users, setUsers] = useState([]); // Users in the left box
   const [rightBoxMembers, setRightBoxMembers] = useState([]); // Users in the right box
+  const [dragging, setDragging] = useState(false); // State to track drag-over
   const [searchLeft, setSearchLeft] = useState("");
   const [searchRight, setSearchRight] = useState("");
 
@@ -35,12 +36,14 @@ export default function DragAndDrop({ isAdmin }) {
         alert("Only admins can perform this action.");
         return;
       }
+      setDragging(true);
       event.dataTransfer.setData("userId", user.id);
       event.dataTransfer.setData("fromRightBox", fromRightBox);
     };
 
   const handleDrop = async (event, isRightBox) => {
     event.preventDefault();
+    setDragging(false);
     if (!isAdmin) {
       alert("Only admins can perform this action.");
       return;
@@ -80,6 +83,11 @@ export default function DragAndDrop({ isAdmin }) {
 
   const handleDragOver = (event) => {
     event.preventDefault();
+    setDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setDragging(false);
   };
 
   // Filtered lists based on search inputs
@@ -97,10 +105,14 @@ export default function DragAndDrop({ isAdmin }) {
   return (
     <div className="flex gap-8 p-8">
       {/* Left Box */}
-      <div
-        className="w-1/2 p-4 bg-blue-300 rounded shadow"
+      <motion.div
+        className={`w-1/2 p-4 rounded shadow ${
+          dragging ? "bg-blue-400" : "bg-blue-300"
+        }`}
         onDrop={(e) => handleDrop(e, false)}
         onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        whileHover={{ scale: 1.02 }}
       >
         <h2 className="text-lg font-bold mb-4 text-center">Available Users</h2>
         <input
@@ -117,7 +129,14 @@ export default function DragAndDrop({ isAdmin }) {
               className="p-3 sm:p-4 rounded-lg shadow cursor-pointer bg-red-500 text-white"
               draggable={isAdmin}
               onDragStart={handleDragStart(user)}
-              whileHover={{ scale: isAdmin ? 1.05 : 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              whileHover={{
+                scale: isAdmin ? 1.05 : 1,
+                boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.3)",
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               <img
                 src={user.avatar || "default-avatar.png"}
@@ -130,13 +149,17 @@ export default function DragAndDrop({ isAdmin }) {
             </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Right Box */}
-      <div
-        className="w-1/2 p-4 bg-green-300 rounded shadow"
+      <motion.div
+        className={`w-1/2 p-4 rounded shadow ${
+          dragging ? "bg-green-400" : "bg-green-300"
+        }`}
         onDrop={(e) => handleDrop(e, true)}
         onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        whileHover={{ scale: 1.02 }}
       >
         <h2 className="text-lg font-bold mb-4 text-center">Selected Users</h2>
         <input
@@ -153,7 +176,14 @@ export default function DragAndDrop({ isAdmin }) {
               className="p-3 sm:p-4 rounded-lg shadow cursor-pointer bg-white text-black"
               draggable={isAdmin}
               onDragStart={handleDragStart(user, true)}
-              whileHover={{ scale: isAdmin ? 1.05 : 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              whileHover={{
+                scale: isAdmin ? 1.05 : 1,
+                boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.3)",
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
               <img
                 src={user.avatar || "default-avatar.png"}
@@ -167,7 +197,7 @@ export default function DragAndDrop({ isAdmin }) {
             </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
