@@ -1,15 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
-  Link,
 } from "react-router-dom";
 import Login from "./Login";
 import Header from "./Header";
 import UsersList from "./UsersList";
-import HomePage from "./HomePage"; // Create a new HomePage component
+import HomePage from "./HomePage";
 import DragAndDrop from "./DragAndDrop";
 
 const App = () => {
@@ -22,14 +21,43 @@ const App = () => {
   const [loggedInUserAvatar, setLoggedInUserAvatar] = useState(
     localStorage.getItem("userAvatar") || ""
   );
+  const [users, setUsers] = useState([]); // Initialize users state
   const [clickedUsers, setClickedUsers] = useState({});
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch("https://camataru.ro/api/users");
+        const data = await response.json();
+        setUsers(data);
+
+        // Set admin status and initialize clickedUsers
+        const initialStatus = {};
+        let adminStatus = false;
+
+        data.forEach((user) => {
+          initialStatus[user.discord_id] = user.status || false;
+          if (user.pin === loggedInPin && user.is_admin) {
+            adminStatus = true;
+          }
+        });
+
+        setClickedUsers(initialStatus);
+        setIsAdmin(adminStatus);
+      } catch (error) {
+        console.error("Failed to fetch users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, [loggedInPin]);
 
   const handleLogin = (pin, name, avatar) => {
     setLoggedInPin(pin);
     setLoggedInUserName(name);
     setLoggedInUserAvatar(avatar);
 
-    // Save session data
     localStorage.setItem("userPin", pin);
     localStorage.setItem("userName", name);
     localStorage.setItem("userAvatar", avatar);
@@ -42,11 +70,10 @@ const App = () => {
 
     if (userId) {
       try {
-        await fetch("/api/toggle-status", {
+        await fetch("https://camataru.ro/api/toggle-status", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest", // Adding a custom header
           },
           body: JSON.stringify({ userId, status: false }),
         });
@@ -59,18 +86,17 @@ const App = () => {
       }
     }
 
-    // Clear session data
     localStorage.removeItem("userPin");
     localStorage.removeItem("userName");
     localStorage.removeItem("userAvatar");
 
-    // Reset state
     setLoggedInPin(null);
     setLoggedInUserName("");
     setLoggedInUserAvatar("");
     setClickedUsers({});
-    navigate("/"); // Redirect to login page
-    window.location.reload(); // Force a page refresh
+    setIsAdmin(false);
+
+    window.location.href = "/";
   };
 
   return (
@@ -84,7 +110,6 @@ const App = () => {
           />
         )}
         <Routes>
-          {/* Login Route */}
           <Route
             path="/"
             element={
@@ -95,23 +120,38 @@ const App = () => {
               )
             }
           />
-
-          {/* Home Route */}
           <Route
             path="/home"
             element={loggedInPin ? <HomePage /> : <Navigate to="/" />}
           />
-
-          <Route path="/test" element={<DragAndDrop />} />
-          {/* Users Route */}
+          <Route
+            path="/test"
+            element={
+              loggedInPin ? (
+                <DragAndDrop
+                  loggedInPin={loggedInPin}
+                  users={users}
+                  setUsers={setUsers}
+                  clickedUsers={clickedUsers}
+                  setClickedUsers={setClickedUsers}
+                  isAdmin={isAdmin}
+                />
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
           <Route
             path="/users"
             element={
               loggedInPin ? (
                 <UsersList
                   loggedInPin={loggedInPin}
+                  users={users}
+                  setUsers={setUsers}
                   clickedUsers={clickedUsers}
                   setClickedUsers={setClickedUsers}
+                  isAdmin={isAdmin}
                 />
               ) : (
                 <Navigate to="/" />

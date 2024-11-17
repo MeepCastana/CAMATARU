@@ -65,7 +65,7 @@ const Login = ({ onLogin }) => {
 
     try {
       // Verify the PIN with the backend
-      const response = await fetch("/api/verify-pin", {
+      const response = await fetch("https://camataru.ro/api/verify-pin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,11 +77,14 @@ const Login = ({ onLogin }) => {
       const data = await response.json();
       if (response.ok && data.success) {
         // Fetch user details based on the verified PIN
-        const userResponse = await fetch(`/api/get-user-by-pin/${pin}`, {
-          headers: {
-            "X-Requested-With": "XMLHttpRequest", // Adding a custom header
-          },
-        });
+        const userResponse = await fetch(
+          `https://camataru.ro/api/get-user-by-pin/${pin}`,
+          {
+            headers: {
+              "X-Requested-With": "XMLHttpRequest", // Adding a custom header
+            },
+          }
+        );
         const userData = await userResponse.json();
 
         if (userResponse.ok && userData) {

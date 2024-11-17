@@ -42,7 +42,7 @@ const UsersList = ({ loggedInPin, clickedUsers, setClickedUsers }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("/api/users");
+        const response = await fetch("https://camataru.ro/api/users");
         const data = await response.json();
         setUsers(data);
 
@@ -79,7 +79,7 @@ const UsersList = ({ loggedInPin, clickedUsers, setClickedUsers }) => {
       }));
 
       try {
-        await fetch("/api/toggle-status", {
+        await fetch("https://camataru.ro/api/toggle-status", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -97,7 +97,7 @@ const UsersList = ({ loggedInPin, clickedUsers, setClickedUsers }) => {
 
   const resetStatuses = async () => {
     try {
-      await fetch("/api/reset-statuses", {
+      await fetch("https://camataru.ro/api/reset-statuses", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
