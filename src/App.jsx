@@ -148,6 +148,5 @@ const App = () => {
     </Router>
   );
 };
-console.log("Admin Status:", isAdmin);
 
 export default App;
