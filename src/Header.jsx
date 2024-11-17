@@ -23,11 +23,11 @@ const Header = ({ userName, userAvatar, onLogout }) => {
           {/* Display the user's name or 'Guest' */}
         </div>
       </Link>
-      <div className="flex justify-between space-x-2">
+      <div className="flex justify-between space-x-5">
         <div>
           <Link to="/users">
             <button className="bg-yellow-500 text-white  hover:bg-yellow-700 transition-all duration-150 ease-in-out max-sm:rounded-3xl px-4 py-2">
-              <span className="sm:inline hidden">👥Membri👥</span>
+              <span className="sm:inline hidden">👥Membrii👥</span>
               <span className="sm:hidden inline">👥</span>
             </button>
           </Link>
@@ -35,7 +35,7 @@ const Header = ({ userName, userAvatar, onLogout }) => {
 
         <div>
           <Link to="/test">
-            <button className="bg-blue-500 text-white hover:bg-blue-700 transition-all duration-150 ease-in-out max-sm:rounded-3xl px-4 py-2">
+            <button className="bg-purple-500 text-white hover:bg-purple-700 transition-all duration-150 ease-in-out max-sm:rounded-3xl px-4 py-2">
               <span className="sm:inline hidden">💸Taxa💸</span>
 
               {/* Show on mobile, hide on larger screens */}

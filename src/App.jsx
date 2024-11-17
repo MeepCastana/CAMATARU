@@ -21,38 +21,44 @@ const App = () => {
   const [loggedInUserAvatar, setLoggedInUserAvatar] = useState(
     localStorage.getItem("userAvatar") || ""
   );
-  const [users, setUsers] = useState([]); // Initialize users state
+  const [users, setUsers] = useState([]); // Centralized users state
   const [clickedUsers, setClickedUsers] = useState({});
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // Function to fetch users and update state
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("https://camataru.ro/api/users", {
+        method: "GET",
+        credentials: "include", // Include cookies for authentication
+      });
+      const data = await response.json();
+
+      // Initialize statuses and check if the logged-in user is an admin
+      const initialStatus = {};
+      let adminStatus = false;
+
+      data.forEach((user) => {
+        initialStatus[user.discord_id] = user.status || false;
+        if (user.pin === loggedInPin && user.is_admin) {
+          adminStatus = true;
+        }
+      });
+
+      setUsers(data); // Update users globally
+      setClickedUsers(initialStatus); // Sync clickedUsers with DB data
+      setIsAdmin(adminStatus); // Set admin status
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
+  };
+
+  // Fetch users on initial load and when loggedInPin changes
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("https://camataru.ro/api/users");
-        const data = await response.json();
-        setUsers(data);
-
-        // Set admin status and initialize clickedUsers
-        const initialStatus = {};
-        let adminStatus = false;
-
-        data.forEach((user) => {
-          initialStatus[user.discord_id] = user.status || false;
-          if (user.pin === loggedInPin && user.is_admin) {
-            adminStatus = true;
-          }
-        });
-
-        setClickedUsers(initialStatus);
-        setIsAdmin(adminStatus);
-      } catch (error) {
-        console.error("Failed to fetch users:", error);
-      }
-    };
-
-    fetchUsers();
+    if (loggedInPin) fetchUsers();
   }, [loggedInPin]);
 
+  // Handle user login
   const handleLogin = (pin, name, avatar) => {
     setLoggedInPin(pin);
     setLoggedInUserName(name);
@@ -63,6 +69,7 @@ const App = () => {
     localStorage.setItem("userAvatar", avatar);
   };
 
+  // Handle user logout
   const handleLogout = async () => {
     const userId = Object.keys(clickedUsers).find(
       (id) => clickedUsers[id] && loggedInPin
@@ -77,10 +84,6 @@ const App = () => {
           },
           body: JSON.stringify({ userId, status: false }),
         });
-        setClickedUsers((prev) => ({
-          ...prev,
-          [userId]: false,
-        }));
       } catch (error) {
         console.error("Failed to untoggle user status on logout:", error);
       }
@@ -96,12 +99,13 @@ const App = () => {
     setClickedUsers({});
     setIsAdmin(false);
 
+    setUsers([]); // Clear users state on logout
     window.location.href = "/";
   };
 
   return (
     <Router>
-      <div className="w-screen">
+      <div>
         {loggedInPin && (
           <Header
             userName={loggedInUserName}
@@ -131,7 +135,7 @@ const App = () => {
                 <DragAndDrop
                   loggedInPin={loggedInPin}
                   users={users}
-                  setUsers={setUsers}
+                  setUsers={fetchUsers} // Fetch users after any update
                   clickedUsers={clickedUsers}
                   setClickedUsers={setClickedUsers}
                   isAdmin={isAdmin}
@@ -148,7 +152,7 @@ const App = () => {
                 <UsersList
                   loggedInPin={loggedInPin}
                   users={users}
-                  setUsers={setUsers}
+                  setUsers={fetchUsers} // Fetch users after any update
                   clickedUsers={clickedUsers}
                   setClickedUsers={setClickedUsers}
                   isAdmin={isAdmin}
