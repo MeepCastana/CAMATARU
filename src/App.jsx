@@ -69,6 +69,8 @@ const App = () => {
     setLoggedInUserName("");
     setLoggedInUserAvatar("");
     setClickedUsers({});
+    navigate("/"); // Redirect to login page
+    window.location.reload(); // Force a page refresh
   };
 
   return (
