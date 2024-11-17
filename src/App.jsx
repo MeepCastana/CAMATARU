@@ -105,7 +105,7 @@ const App = () => {
 
   return (
     <Router>
-      <div>
+      <div className="bg-zinc-800">
         {loggedInPin && (
           <Header
             userName={loggedInUserName}
