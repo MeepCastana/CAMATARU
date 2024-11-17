@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
+  Link,
 } from "react-router-dom";
 import Login from "./Login";
 import Header from "./Header";
 import UsersList from "./UsersList";
-import HomePage from "./HomePage";
+import HomePage from "./HomePage"; // Create a new HomePage component
 import DragAndDrop from "./DragAndDrop";
 
 const App = () => {
@@ -21,26 +22,7 @@ const App = () => {
   const [loggedInUserAvatar, setLoggedInUserAvatar] = useState(
     localStorage.getItem("userAvatar") || ""
   );
-  const [isAdmin, setIsAdmin] = useState(false); // New state for admin status
   const [clickedUsers, setClickedUsers] = useState({});
-
-  useEffect(() => {
-    // Fetch admin status if logged in
-    const fetchAdminStatus = async () => {
-      if (loggedInPin) {
-        try {
-          const response = await fetch(`/api/get-user-by-pin/${loggedInPin}`);
-          const data = await response.json();
-
-          setIsAdmin(data?.is_admin || false); // Update admin status
-        } catch (error) {
-          console.error("Failed to fetch admin status:", error);
-        }
-      }
-    };
-
-    fetchAdminStatus();
-  }, [loggedInPin]);
 
   const handleLogin = (pin, name, avatar) => {
     setLoggedInPin(pin);
@@ -51,11 +33,6 @@ const App = () => {
     localStorage.setItem("userPin", pin);
     localStorage.setItem("userName", name);
     localStorage.setItem("userAvatar", avatar);
-
-    // Fetch admin status after login
-    setTimeout(() => {
-      fetchAdminStatus();
-    }, 0);
   };
 
   const handleLogout = async () => {
@@ -91,7 +68,6 @@ const App = () => {
     setLoggedInPin(null);
     setLoggedInUserName("");
     setLoggedInUserAvatar("");
-    setIsAdmin(false);
     setClickedUsers({});
   };
 
@@ -124,9 +100,7 @@ const App = () => {
             element={loggedInPin ? <HomePage /> : <Navigate to="/" />}
           />
 
-          {/* Drag and Drop Route */}
-          <Route path="/test" element={<DragAndDrop isAdmin={isAdmin} />} />
-
+          <Route path="/test" element={<DragAndDrop />} />
           {/* Users Route */}
           <Route
             path="/users"
@@ -136,7 +110,6 @@ const App = () => {
                   loggedInPin={loggedInPin}
                   clickedUsers={clickedUsers}
                   setClickedUsers={setClickedUsers}
-                  isAdmin={isAdmin} // Pass admin status here
                 />
               ) : (
                 <Navigate to="/" />
