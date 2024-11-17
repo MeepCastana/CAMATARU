@@ -13,7 +13,7 @@ const UsersGrid = ({ users, clickedUsers, toggleUser }) => {
           <motion.div
             key={user.discord_id}
             className={`p-3 sm:p-4 rounded-lg shadow cursor-pointer transition-colors duration-200 ${
-              clickedUsers[user.discord_id] ? "bg-green-500" : "bg-red-500"
+              clickedUsers[user.discord_id] ? "bg-green-500" : "bg-red-800"
             }`}
             onClick={() => toggleUser(user.discord_id, user.pin)}
             whileHover={{
