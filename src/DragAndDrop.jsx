@@ -105,14 +105,11 @@ export default function DragAndDrop({ isAdmin }) {
   return (
     <div className="flex gap-8 p-8">
       {/* Left Box */}
-      <motion.div
-        className={`w-1/2 p-4 rounded shadow ${
-          dragging ? "bg-blue-400" : "bg-blue-300"
-        }`}
+      <div
+        className={`w-1/2 p-4 rounded shadow bg-blue-300`}
         onDrop={(e) => handleDrop(e, false)}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        whileHover={{ scale: 1.02 }}
       >
         <h2 className="text-lg font-bold mb-4 text-center">Available Users</h2>
         <input
@@ -149,17 +146,14 @@ export default function DragAndDrop({ isAdmin }) {
             </motion.div>
           ))}
         </div>
-      </motion.div>
+      </div>
 
       {/* Right Box */}
-      <motion.div
-        className={`w-1/2 p-4 rounded shadow ${
-          dragging ? "bg-green-400" : "bg-green-300"
-        }`}
+      <div
+        className={`w-1/2 p-4 rounded shadow bg-green-300`}
         onDrop={(e) => handleDrop(e, true)}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        whileHover={{ scale: 1.02 }}
       >
         <h2 className="text-lg font-bold mb-4 text-center">Selected Users</h2>
         <input
@@ -197,7 +191,7 @@ export default function DragAndDrop({ isAdmin }) {
             </motion.div>
           ))}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
