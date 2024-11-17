@@ -141,7 +141,7 @@ const UsersList = ({ loggedInPin, clickedUsers, setClickedUsers }) => {
       <div className="w-full mb-6">
         <input
           type="text"
-          placeholder="Search users..."
+          placeholder="Cauta membrii..."
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           className="w-full p-3 rounded-md bg-zinc-900  focus:outline-none"
