@@ -1,54 +1,51 @@
 import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
 import { motion } from "framer-motion";
 
-// Connect to the server
-const socket = io("http://localhost:5000");
-
-export default function DragAndDrop() {
-  const [users, setUsers] = useState([]);
-  const [rightBoxMembers, setRightBoxMembers] = useState([]);
+export default function DragAndDrop({ isAdmin }) {
+  const [users, setUsers] = useState([]); // Users in the left box
+  const [rightBoxMembers, setRightBoxMembers] = useState([]); // Users in the right box
   const [searchLeft, setSearchLeft] = useState("");
   const [searchRight, setSearchRight] = useState("");
 
   useEffect(() => {
-    // Fetch users from the server
+    // Fetch users from the backend periodically
     const fetchUsers = async () => {
       try {
         const response = await fetch("/api/users");
         const data = await response.json();
-        setUsers(data);
+
+        // Split users based on their `paid` field
+        setUsers(data.filter((user) => !user.paid)); // Left box
+        setRightBoxMembers(data.filter((user) => user.paid)); // Right box
       } catch (error) {
         console.error("Failed to fetch users:", error);
       }
     };
-    fetchUsers();
 
-    // Listen to updates from the server
-    socket.on("user-updated", (updatedUser) => {
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === updatedUser.id ? updatedUser : user
-        )
-      );
-    });
+    fetchUsers(); // Initial fetch
+    const interval = setInterval(fetchUsers, 2000); // Poll every 2 seconds
 
-    return () => {
-      socket.off("user-updated");
-    };
+    return () => clearInterval(interval); // Clean up the interval on component unmount
   }, []);
 
-  // Drag start handler
   const handleDragStart =
     (user, fromRightBox = false) =>
     (event) => {
+      if (!isAdmin) {
+        alert("Only admins can perform this action.");
+        return;
+      }
       event.dataTransfer.setData("userId", user.id);
       event.dataTransfer.setData("fromRightBox", fromRightBox);
     };
 
-  // Drop handler for both left and right boxes
-  const handleDrop = (event, isRightBox) => {
+  const handleDrop = async (event, isRightBox) => {
     event.preventDefault();
+    if (!isAdmin) {
+      alert("Only admins can perform this action.");
+      return;
+    }
+
     const userId = parseInt(event.dataTransfer.getData("userId"));
     const fromRightBox = event.dataTransfer.getData("fromRightBox") === "true";
 
@@ -56,21 +53,31 @@ export default function DragAndDrop() {
       // Moving from left to right
       const user = users.find((u) => u.id === userId);
       const info = prompt(`Enter additional information for ${user.name}`);
-      if (info) {
-        const updatedUser = { ...user, info };
-        setRightBoxMembers((prev) => [...prev, updatedUser]);
-        setUsers((prev) => prev.filter((u) => u.id !== userId));
+      if (info !== null) {
+        try {
+          await fetch("/api/drag-and-drop", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId, paid: true, info }),
+          });
+        } catch (error) {
+          console.error("Failed to update user:", error);
+        }
       }
     } else if (!isRightBox && fromRightBox) {
-      // Moving from right to left (reset info)
-      const user = rightBoxMembers.find((u) => u.id === userId);
-      const resetUser = { ...user, info: "" };
-      setUsers((prev) => [...prev, resetUser]);
-      setRightBoxMembers((prev) => prev.filter((u) => u.id !== userId));
+      // Moving from right to left
+      try {
+        await fetch("/api/drag-and-drop", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, paid: false }),
+        });
+      } catch (error) {
+        console.error("Failed to update user:", error);
+      }
     }
   };
 
-  // Drag over handler to allow dropping
   const handleDragOver = (event) => {
     event.preventDefault();
   };
@@ -107,23 +114,17 @@ export default function DragAndDrop() {
           {filteredUsers.map((user) => (
             <motion.div
               key={user.id}
-              className={`p-3 sm:p-4 rounded-lg shadow cursor-pointer transition-colors duration-200 ${
-                user.status ? "bg-green-500" : "bg-red-500"
-              }`}
-              draggable
+              className="p-3 sm:p-4 rounded-lg shadow cursor-pointer bg-red-500 text-white"
+              draggable={isAdmin}
               onDragStart={handleDragStart(user)}
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.3)",
-              }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              whileHover={{ scale: isAdmin ? 1.05 : 1 }}
             >
               <img
                 src={user.avatar || "default-avatar.png"}
                 alt={`${user.username}'s avatar`}
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mx-auto mb-2"
               />
-              <span className="block text-center text-white text-sm sm:text-base font-semibold">
+              <span className="block text-center font-semibold">
                 {user.display_name || user.username}
               </span>
             </motion.div>
@@ -149,14 +150,10 @@ export default function DragAndDrop() {
           {filteredRightBoxMembers.map((user) => (
             <motion.div
               key={user.id}
-              className="p-3 sm:p-4 rounded-lg shadow cursor-pointer bg-white text-black transition-colors duration-200"
-              draggable
+              className="p-3 sm:p-4 rounded-lg shadow cursor-pointer bg-white text-black"
+              draggable={isAdmin}
               onDragStart={handleDragStart(user, true)}
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0px 8px 15px rgba(0, 0, 0, 0.3)",
-              }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              whileHover={{ scale: isAdmin ? 1.05 : 1 }}
             >
               <img
                 src={user.avatar || "default-avatar.png"}
@@ -164,7 +161,7 @@ export default function DragAndDrop() {
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-full mx-auto mb-2"
               />
               <span className="block text-center font-semibold">
-                {user.name}
+                {user.display_name || user.username}
               </span>
               <p className="text-sm text-gray-600">{user.info}</p>
             </motion.div>
