@@ -107,11 +107,11 @@ const UsersList = ({
         </div>
       )}
       {/* Replace the grid with UsersGrid */}
-      <UsersGrid
+      {/* <UsersGrid
         users={users}
         clickedUsers={clickedUsers}
         toggleUser={toggleUser}
-      />
+      /> */}
 
       {showAlert && (
         <AlertModal
