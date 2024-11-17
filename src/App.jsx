@@ -129,7 +129,7 @@ const App = () => {
             element={loggedInPin ? <HomePage /> : <Navigate to="/" />}
           />
           <Route
-            path="/test"
+            path="/taxa"
             element={
               loggedInPin ? (
                 <DragAndDrop
@@ -146,7 +146,7 @@ const App = () => {
             }
           />
           <Route
-            path="/users"
+            path="/membrii"
             element={
               loggedInPin ? (
                 <UsersList

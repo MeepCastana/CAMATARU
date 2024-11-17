@@ -71,7 +71,7 @@ export default function DragAndDrop({
       }
 
       const updatedUsers = await response.json();
-      console.log("User updated successfully:", updatedUsers);
+      console.log("User updated successfully:");
     } catch (error) {
       console.error("Failed to update user:", error);
       alert("An error occurred while updating the user. Please try again.");
