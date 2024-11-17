@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 
 const HomePage = () => {
   return (
-    <div className="justify-center flex items-center">
-      <h2>Welcome</h2>
+    <div className="justify-center flex items-center bg-zinc-800">
+      <h2>Salut quavo</h2>
       {/* Add other navigation buttons if needed */}
     </div>
   );
