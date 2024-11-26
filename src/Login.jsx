@@ -140,7 +140,7 @@ const Login = ({ onLogin }) => {
       {/* Login container */}
       <div className="relative z-10 w-full max-w-md p-8 mx-4 bg-white/10 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20">
         <div className="flex flex-col items-center justify-center space-y-6">
-          <h2 className="text-3xl font-bold text-white">Introdu codul PIN</h2>
+          <h2 className="text-3xl font-bold text-white">MERGE IN TIMP REAL</h2>
           <p className="text-lg text-gray-300 text-center">
             Codul PIN il gasesti pe discord cu comanda <code>!pin</code>
           </p>
