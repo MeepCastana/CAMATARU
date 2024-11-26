@@ -72,7 +72,7 @@ const Login = ({ onLogin }) => {
           "X-Requested-With": "XMLHttpRequest",
         },
         body: JSON.stringify({ pin }),
-        credentials: "include", // Required for sending cookies
+        credentials: "include", // Ensures cookies/session are sent
       });
 
       const data = await response.json();
