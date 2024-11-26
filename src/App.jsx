@@ -106,60 +106,39 @@ const App = () => {
   return (
     <Router>
       <div className="bg-zinc-800">
-        {loggedInPin && (
-          <Header
-            userName={loggedInUserName}
-            userAvatar={loggedInUserAvatar}
-            onLogout={handleLogout}
-          />
-        )}
+        <Header
+          userName={loggedInUserName}
+          userAvatar={loggedInUserAvatar}
+          onLogout={handleLogout}
+        />
+
         <Routes>
-          <Route
-            path="/"
-            element={
-              loggedInPin ? (
-                <Navigate to="/home" />
-              ) : (
-                <Login onLogin={handleLogin} />
-              )
-            }
-          />
-          <Route
-            path="/home"
-            element={loggedInPin ? <HomePage /> : <Navigate to="/" />}
-          />
+          <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/home" element={<HomePage />} />
           <Route
             path="/taxa"
             element={
-              loggedInPin ? (
-                <DragAndDrop
-                  loggedInPin={loggedInPin}
-                  users={users}
-                  setUsers={fetchUsers} // Fetch users after any update
-                  clickedUsers={clickedUsers}
-                  setClickedUsers={setClickedUsers}
-                  isAdmin={isAdmin}
-                />
-              ) : (
-                <Navigate to="/" />
-              )
+              <DragAndDrop
+                loggedInPin={loggedInPin}
+                users={users}
+                setUsers={fetchUsers} // Fetch users after any update
+                clickedUsers={clickedUsers}
+                setClickedUsers={setClickedUsers}
+                isAdmin={isAdmin}
+              />
             }
           />
           <Route
             path="/membrii"
             element={
-              loggedInPin ? (
-                <UsersList
-                  loggedInPin={loggedInPin}
-                  users={users}
-                  setUsers={fetchUsers} // Fetch users after any update
-                  clickedUsers={clickedUsers}
-                  setClickedUsers={setClickedUsers}
-                  isAdmin={isAdmin}
-                />
-              ) : (
-                <Navigate to="/" />
-              )
+              <UsersList
+                loggedInPin={loggedInPin}
+                users={users}
+                setUsers={fetchUsers} // Fetch users after any update
+                clickedUsers={clickedUsers}
+                setClickedUsers={setClickedUsers}
+                isAdmin={isAdmin}
+              />
             }
           />
         </Routes>
